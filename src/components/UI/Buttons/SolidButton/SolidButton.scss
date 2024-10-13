@@ -1,0 +1,15 @@
+.solid-button {
+  background-color: #4ba7fe;
+  font-family: "Inter", sans-serif;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 15px;
+  font-weight: 500;
+  transition: 200ms ease-in-out;
+}
+
+.solid-button:hover {
+  cursor: pointer;
+  background-color: #68a9e699;
+}

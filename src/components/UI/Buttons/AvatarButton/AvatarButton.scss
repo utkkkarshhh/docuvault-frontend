@@ -1,0 +1,35 @@
+.avatar-button {
+  padding: 5px 10px 2px 10px;
+  display: flex;
+  align-items: center; /* Align items vertically centered */
+  gap: 10px;
+  background-color: rgb(245, 243, 243);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 200ms ease-in-out;
+  outline: none;
+}
+
+.avatar-button:hover {
+  background-color: rgb(228, 226, 226);
+}
+
+.avatar-image {
+  display: flex;
+  align-items: center; /* Center the image vertically */
+  justify-content: center;
+}
+
+.avatar-image {
+  width: 30px; /* Fixed width */
+  height: 30px; /* Fixed height */
+  border-radius: 50%; /* Makes the image circular */
+  border: 2px solid black;
+}
+
+.avatar-text p {
+  margin: 0;
+  font-weight: 400;
+  font-family: "Inter", sans-serif;
+  font-size: 14px; /* Adjust as needed */
+}

@@ -1,0 +1,57 @@
+.homepage {
+  margin: auto;
+  width: 90%;
+
+  &-head {
+    margin: 30px auto;
+
+    p {
+      font-size: 30px;
+      font-weight: 800;
+      margin: 0 10px;
+    }
+  }
+
+  .document-upload-area {
+    display: flex; /* Aligns child components in a row */
+    flex-direction: column; /* Stacks children vertically */
+    align-items: center; /* Centers children horizontally */
+    justify-content: center; /* Centers children vertically */
+    padding: 20px; /* Adds space around the area */
+
+    &-input {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      border: 2px dashed #ebedf2;
+      padding: 20px 150px;
+      margin: 20px 20px;
+      flex-direction: column;
+      align-items: center;
+      background-color: rgb(227, 229, 239);
+      border-radius: 8px;
+      max-height: 100px; 
+      max-width: 800px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgb(212, 215, 231); /* Changes background on hover */
+      }
+
+      &-heading {
+        font-weight: 800;
+        font-size: 20px;
+      }
+
+      &-subheading {
+        font-size: 14px;
+        color: #777;
+      }
+    }
+  }
+
+  input {
+    display: none; /* Hides the default file input */
+  }
+}

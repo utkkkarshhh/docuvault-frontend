@@ -1,0 +1,54 @@
+.landing-page-card {
+  background-color: #f8f8f8;
+  width: 65%;
+  margin: auto auto;
+  padding: 20px 50px;
+  border-radius: 21px;
+
+  &-top p {
+    font-weight: bold;
+    font-size: 22px;
+    margin: 0 10px 10px 10px 10px;
+  }
+
+  &-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-line p {
+      font-size: 14px;
+    }
+
+    &-line-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Inter", sans-serif;
+      background-color: black;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 1px 20px;
+      border-radius: 22px;
+      border: none;
+
+      :hover {
+        cursor: pointer;
+        background-color: rgb(31, 29, 29);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .landing-page-card-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+  }
+
+  .landing-page-card-top p {
+    margin-left: 0px;
+  }
+}

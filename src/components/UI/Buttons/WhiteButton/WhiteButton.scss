@@ -1,0 +1,15 @@
+.white-button {
+  background-color: #f1f2f4;
+  font-family: "Inter", sans-serif;
+  color: #000;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 15px;
+  font-weight: 500;
+  transition: 200ms ease-in-out;
+}
+
+.white-button:hover {
+  cursor: pointer;
+  background-color: #c7c8c950;
+}

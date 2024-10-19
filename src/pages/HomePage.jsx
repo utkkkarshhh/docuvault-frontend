@@ -48,7 +48,7 @@ export default function ResponsiveHomepage() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center md:text-left">
+        <h1 className="text-2xl font-bold mb-8 text-center md:text-left">
           Hi {userName}, Welcome back!
         </h1>
 
@@ -78,6 +78,7 @@ export default function ResponsiveHomepage() {
                   className="hidden"
                   accept=".doc,.docx,.pdf,image/*"
                   onChange={handleFileInputChange}
+                  required
                 />
               </div>
               {selectedFile && (

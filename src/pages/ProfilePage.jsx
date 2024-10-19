@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ProfileSection from "@/components/UI/ProfileSection/ProfileSection";
-import DocumentsSection from "@/components/UI/DocumentsSection/DocumentsSection";
+import ProfileSection from "@/components/ui/ProfileSection/ProfileSection";
+import DocumentsSection from "@/components/ui/DocumentsSection/DocumentsSection";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");

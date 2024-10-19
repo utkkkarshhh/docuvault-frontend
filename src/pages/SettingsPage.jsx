@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
-import ProfileSection from "@/components/UI/ProfileSection/ProfileSection";
+import ProfileSection from "@/components/ui/ProfileSection/ProfileSection";
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState("Account");

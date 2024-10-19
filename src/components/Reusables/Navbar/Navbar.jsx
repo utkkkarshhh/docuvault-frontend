@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
-import SolidButton from "../../UI/Buttons/SolidButton/SolidButton";
+import SolidButton from "../../ui/Buttons/SolidButton/SolidButton";
 import { FaBars, FaTimes } from "react-icons/fa";
-import Avatar from "@/components/UI/Buttons/AvatarButton/Avatar";
+import Avatar from "@/components/ui/Buttons/AvatarButton/Avatar";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

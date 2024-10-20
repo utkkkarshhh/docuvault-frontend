@@ -1,9 +1,9 @@
 import React from "react";
 import "./LandingPage.scss";
-import SolidButton from "../components/ui/Buttons/SolidButton/SolidButton";
-import WhiteButton from "../components/ui/Buttons/WhiteButton/WhiteButton";
-import LandingPageCard from "../components/ui/Cards/LandingPageCard/LandingPageCard";
-import DocumentVector from "../assets/images/1376310.png";
+import SolidButton from "@/components/ui/Buttons/SolidButton/SolidButton";
+import WhiteButton from "@/components/ui/Buttons/WhiteButton/WhiteButton";
+import LandingPageCard from "@/components/ui/Cards/LandingPageCard/LandingPageCard";
+import DocumentVector from "@/assets/images/1376310.png";
 import { IoIosCloudDownload } from "react-icons/io";
 import { AiOutlineSafetyCertificate } from "react-icons/ai";
 import { GiResize } from "react-icons/gi";

@@ -4,17 +4,17 @@ import {
   Routes as RoutingTable,
 } from "react-router-dom";
 import "./App.scss";
-import ProtectedRoute from "./store/ProtectedRoute";
-import Navbar from "./components/Reusables/Navbar/Navbar";
-import HomePage from "./pages/HomePage";
-import LandingPage from "./pages/LandingPage";
-import ProfilePage from "./pages/ProfilePage";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import SettingsPage from "./pages/SettingsPage";
-import Footer from "./components/Reusables/Footer/Footer";
+import ProtectedRoute from "@/store/ProtectedRoute";
+import Navbar from "@/components/Reusables/Navbar/Navbar";
+import HomePage from "@/pages/HomePage";
+import LandingPage from "@/pages/LandingPage";
+import ProfilePage from "@/pages/ProfilePage";
+import SignIn from "@/pages/SignIn";
+import SignUp from "@/pages/SignUp";
+import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
+import SettingsPage from "@/pages/SettingsPage";
+import Footer from "@/components/Reusables/Footer/Footer";
 
 const isAuthenticated = true;
 

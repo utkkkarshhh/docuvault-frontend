@@ -7,7 +7,7 @@ import Avatar from "@/components/ui/Buttons/AvatarButton/Avatar";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isLoggedIn = true;
+  const isLoggedIn = false;
   const userName = "Utkarsh";
 
   const scrollToFeatures = () => {

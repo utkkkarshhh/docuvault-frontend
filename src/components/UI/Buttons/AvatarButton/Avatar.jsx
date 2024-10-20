@@ -7,7 +7,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import AvatarImage from "../../../../assets/images/avatar-generations_prsz.jpg";
+import AvatarImage from "@/assets/images/avatar-generations_prsz.jpg";
 import "./AvatarButton.scss";
 import { Button } from "@/components/ui/button";
 import {

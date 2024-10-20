@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
-import SolidButton from "../../ui/Buttons/SolidButton/SolidButton";
+import SolidButton from "@/components/ui/Buttons/SolidButton/SolidButton";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Avatar from "@/components/ui/Buttons/AvatarButton/Avatar";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isLoggedIn = false;
+  const isLoggedIn = true;
   const userName = "Utkarsh";
 
   const scrollToFeatures = () => {

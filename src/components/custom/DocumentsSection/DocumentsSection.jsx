@@ -29,8 +29,8 @@ import {
   FileImage,
   FileCode2,
 } from "lucide-react";
-import DeleteModal from "@/components/ui/Modals/DeleteModal";
-import DownloadModal from "@/components/ui/Modals/DownloadModal";
+import DeleteModal from "@/components/custom/Modals/DeleteModal";
+import DownloadModal from "@/components/custom/Modals/DownloadModal";
 
 const documents = [
   {

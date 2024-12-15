@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   Cloud,
   CreditCard,
@@ -20,14 +21,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/auth/authSlice";
 
-const Avatar = (props) => {
+// Utility function for logout
+const logoutUser = async (dispatch) => {
+  try {
+    dispatch(logout());
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("currentUser");
+    delete axios.defaults.headers.common["Authorization"];
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
+
+const Avatar = ({ name }) => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    logoutUser(dispatch);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="avatar-button">
+        <Button
+          variant="outline"
+          className="avatar-button"
+          aria-label="User Menu"
+        >
           <img src={AvatarImage} alt="Avatar" className="avatar-image" />
-          <span className="avatar-name">{props.name}</span>
+          <span className="avatar-name">{name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -36,9 +61,7 @@ const Avatar = (props) => {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            <span>
-              <Link to="/profile">Profile</Link>
-            </span>
+            <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard className="mr-2 h-4 w-4" />
@@ -46,32 +69,26 @@ const Avatar = (props) => {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <span>
-              <Link to="/settings">Settings</Link>
-            </span>
+            <Link to="/settings">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Github className="mr-2 h-4 w-4" />
-          <span>
-            <Link to="https://github.com/utkkkarshhh/docuvault-frontend">
-              GitHub
-            </Link>
-          </span>
+          <Link to="https://github.com/utkkkarshhh/docuvault-frontend">
+            GitHub
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <LifeBuoy className="mr-2 h-4 w-4" />
-          <span>
-            <Link to="mailto:utkarshbhardwajmail@gmail.com">Support</Link>
-          </span>
+          <Link to="mailto:utkarshbhardwajmail@gmail.com">Support</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Cloud className="mr-2 h-4 w-4" />
           <span>API</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

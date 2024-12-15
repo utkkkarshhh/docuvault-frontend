@@ -126,10 +126,10 @@ const RegisterPage = () => {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Login
+                Sign Up
               </Button>
               <Button variant="outline" className="w-full">
-                Login with Google
+                Signup with Google
               </Button>
             </div>
           </form>

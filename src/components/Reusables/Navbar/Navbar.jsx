@@ -1,27 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
-import SolidButton from "@/components/custom//Buttons/SolidButton/SolidButton";
+import SolidButton from "@/components/custom/Buttons/SolidButton/SolidButton";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Avatar from "@/components/custom/Buttons/AvatarButton/Avatar";
+import { useAuth } from "@/utils/authUtils";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isLoggedIn = true;
-  const userName = "Utkarsh";
+  const { isLoggedIn, user } = useAuth();
 
-  const scrollToFeatures = () => {
-    const featuresSection = document.getElementById("features");
-    if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: "smooth" });
-    }
-    setIsMobileMenuOpen(false);
-  };
-
-  const scrollToDevelopers = () => {
-    const developersSection = document.getElementById("developers");
-    if (developersSection) {
-      developersSection.scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
     }
     setIsMobileMenuOpen(false);
   };
@@ -30,7 +22,7 @@ const Navbar = () => {
     <div className={`navbar ${isLoggedIn ? "logged-in" : ""}`}>
       <div className="navbar-icon">
         <p className="navbar-icon-text">
-          <Link to={isLoggedIn ? "/home" : "/"} >DocuVault</Link>
+          <Link to={isLoggedIn ? "/home" : "/"}>DocuVault</Link>
         </p>
       </div>
 
@@ -39,6 +31,7 @@ const Navbar = () => {
         <div
           className="hamburger-menu"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle mobile menu"
         >
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </div>
@@ -48,13 +41,22 @@ const Navbar = () => {
       <div className={`navbar-buttons ${isMobileMenuOpen ? "open" : ""}`}>
         {!isLoggedIn && (
           <>
-            <p className="navbar-item" onClick={scrollToFeatures}>
+            <p
+              className="navbar-item"
+              onClick={() => scrollToSection("features")}
+            >
               Features
             </p>
-            <p className="navbar-item" onClick={scrollToDevelopers}>
+            <p
+              className="navbar-item"
+              onClick={() => scrollToSection("developers")}
+            >
               Developers
             </p>
-            <p className="navbar-item" onClick={scrollToDevelopers}>
+            <p
+              className="navbar-item"
+              onClick={() => scrollToSection("pricing")}
+            >
               Pricing
             </p>
             <SolidButton
@@ -68,7 +70,7 @@ const Navbar = () => {
       </div>
 
       {/* Avatar is always visible and outside the hamburger menu */}
-      {isLoggedIn && <Avatar name={userName} />}
+      {isLoggedIn && <Avatar name={user} />}
     </div>
   );
 };

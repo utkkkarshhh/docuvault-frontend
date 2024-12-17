@@ -20,29 +20,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/auth/authSlice";
-
-// Utility function for logout
-const logoutUser = async (dispatch) => {
-  try {
-    dispatch(logout());
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("currentUser");
-    delete axios.defaults.headers.common["Authorization"];
-  } catch (error) {
-    console.error("Logout failed", error);
-  }
-};
+import { clearState } from "@/redux/user/userSlice";
 
 const Avatar = ({ name }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const isLoggedIn = useSelector(state => state.auth);
+  
   const handleLogout = () => {
-    logoutUser(dispatch);
+    try {
+      dispatch(logout());
+      dispatch(clearState());
+      localStorage.clear();
+      navigate("/");
+      delete axios.defaults.headers.common["Authorization"];
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

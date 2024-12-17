@@ -1,5 +1,6 @@
 import axios from "axios";
 import { signInSuccess } from "@/redux/user/userSlice";
+import { login } from "@/redux/auth/authSlice";
 
 export const loadUserFromLocalStorage = (dispatch) => {
   const token = localStorage.getItem("authToken");
@@ -7,6 +8,7 @@ export const loadUserFromLocalStorage = (dispatch) => {
 
   if (token && user) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    dispatch(signInSuccess(JSON.parse(user)));
+    dispatch(signInSuccess({user : JSON.parse(user)}));
+    dispatch(login(user));
   }
 };

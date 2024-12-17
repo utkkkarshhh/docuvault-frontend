@@ -18,9 +18,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function ResponsiveHomepage() {
-  const [userName, setUserName] = useState("Utkarsh");
+
   const [fileName, setFileName] = useState("");
   const [fileDescription, setFileDescription] = useState("");
   const [fileCategory, setFileCategory] = useState("");
@@ -45,11 +46,13 @@ export default function ResponsiveHomepage() {
     });
   };
 
+  const { currentUser } = useSelector((state) => state.user);
+  
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-8 text-center md:text-left">
-          Hi {userName}, Welcome back!
+          Hi {currentUser?.username}, Welcome back!
         </h1>
 
         <div className="grid gap-8 md:grid-cols-2">

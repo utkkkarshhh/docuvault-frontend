@@ -11,6 +11,7 @@ import {
   signInSuccess,
   signInFailure,
 } from "@/redux/user/userSlice";
+import { login } from "@/redux/auth/authSlice";
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState("");
@@ -62,6 +63,7 @@ const LoginPage = () => {
         ] = `Bearer ${response.data.token}`;
 
         dispatch(signInSuccess({ user }));
+        dispatch(login(user));
 
         setIdentifier("");
         setPassword("");

@@ -4,11 +4,12 @@ import "./Navbar.scss";
 import SolidButton from "@/components/custom/Buttons/SolidButton/SolidButton";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Avatar from "@/components/custom/Buttons/AvatarButton/Avatar";
-import { useAuth } from "@/utils/authUtils";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user } = useSelector(state => state.auth);
+  const { currentUser } =  useSelector(state => state.user);
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -70,7 +71,7 @@ const Navbar = () => {
       </div>
 
       {/* Avatar is always visible and outside the hamburger menu */}
-      {isLoggedIn && <Avatar name={user} />}
+      {isLoggedIn && <Avatar name={currentUser?.username} />}
     </div>
   );
 };

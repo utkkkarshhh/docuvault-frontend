@@ -20,7 +20,7 @@ import { loadUserFromLocalStorage } from "@/utils/CheckAuthState";
 
 function App() {
   const dispatch = useDispatch();
-
+  
   // Load user authentication state from localStorage on app load
   useEffect(() => {
     loadUserFromLocalStorage(dispatch);

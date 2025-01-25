@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
@@ -19,7 +19,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Get loading and error states from Redux
   const { loading, error } = useSelector((state) => state.user);
 
   const baseUrl = import.meta.env.VITE_APP_BASE_URL;
@@ -79,7 +78,7 @@ const LoginPage = () => {
       const err =
         error.response?.data?.message || error.message || "An error occurred";
 
-      dispatch(signInFailure(err)); // Dispatch failure action
+      dispatch(signInFailure(err));
 
       localStorage.removeItem("authToken");
       delete axios.defaults.headers.common["Authorization"];

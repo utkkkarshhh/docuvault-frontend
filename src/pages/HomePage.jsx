@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import toast, { Toaster } from "react-hot-toast";
 import {
   Select,
   SelectContent,
@@ -17,39 +18,113 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function ResponsiveHomepage() {
-
   const [fileName, setFileName] = useState("");
   const [fileDescription, setFileDescription] = useState("");
   const [fileCategory, setFileCategory] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+  const { currentUser } = useSelector((state) => state.user);
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log("File selected:", file.name);
       setSelectedFile(file);
       setFileName(file.name);
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Document uploaded", {
-      fileName,
-      fileDescription,
-      fileCategory,
-      selectedFile,
-    });
+  const resetForm = () => {
+    setFileName("");
+    setFileDescription("");
+    setFileCategory("");
+    setSelectedFile(null);
+    document.getElementById("fileInput").value = "";
   };
 
-  const { currentUser } = useSelector((state) => state.user);
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!selectedFile) {
+      toast.error("Please select a file.");
+      return;
+    }
+
+    if (!fileCategory) {
+      toast.error("Please select a file category.");
+      return;
+    }
+
+    if (!fileName.trim()) {
+      toast.error("Please enter a file name.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", fileName);
+    formData.append("description", fileDescription);
+    formData.append("type", fileCategory);
+    formData.append("file", selectedFile);
+    formData.append("user_id", currentUser.user_id);
+
+    try {
+      setIsLoading(true);
+
+      if (!baseUrl) {
+        throw new Error("Base URL is not defined");
+      }
+
+      const response = await axios.post(
+        `${baseUrl}/api/doc/uploadDocument`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Check for specific success scenarios
+      if (response.status === 200 || response.status === 201) {
+        // Reset form inputs
+        resetForm();
+
+        // Show success message
+        toast.success(
+          response.data.message || "Document uploaded successfully!"
+        );
+      } else {
+        toast.error("Upload failed. Please try again.");
+      }
+    } catch (error) {
+      // More detailed error handling
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        const errorMessage =
+          error.response.data.message || "An error occurred during upload.";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        toast.error("No response from server. Please check your connection.");
+      } else {
+        // Something happened in setting up the request
+        toast.error("Error preparing upload. Please try again.");
+      }
+      console.error("Upload error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-8 text-center md:text-left">
           Hi {currentUser?.username}, Welcome back!
@@ -114,9 +189,7 @@ export default function ResponsiveHomepage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">
-                    Add a description
-                  </Label>
+                  <Label htmlFor="description">Add a description</Label>
                   <Textarea
                     id="description"
                     placeholder="Enter file description"
@@ -127,7 +200,10 @@ export default function ResponsiveHomepage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="category">File Category *</Label>
-                  <Select onValueChange={(value) => setFileCategory(value)}>
+                  <Select
+                    value={fileCategory}
+                    onValueChange={(value) => setFileCategory(value)}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -139,8 +215,15 @@ export default function ResponsiveHomepage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full">
-                  Upload Document
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Upload Document"
+                  )}
                 </Button>
               </form>
             </CardContent>

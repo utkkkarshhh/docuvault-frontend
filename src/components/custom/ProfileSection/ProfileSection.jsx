@@ -26,12 +26,16 @@ const ProfileSection = () => {
 
   const { currentUser } = useSelector((state) => state.user);
   const userId = currentUser.user_id;
+  const baseUrl = import.meta.env.VITE_APP_BASE_URL;
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
+        if (!baseUrl) {
+          throw new Error("Base URL is not defined");
+        }
         const response = await axios.get(
-          `http://localhost:9999/api/users/userDetail/${userId}`,
+          `${baseUrl}/api/users/userDetail/${userId}`,
           {
             headers: {
               Accept: "application/json",
@@ -52,7 +56,7 @@ const ProfileSection = () => {
     };
 
     fetchUserDetails();
-  }, [userId]);
+  }, []);
 
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
@@ -76,7 +80,7 @@ const ProfileSection = () => {
       };
 
       const response = await axios.put(
-        `http://localhost:9999/api/users/updateUserDetail/${userId}`,
+        `${baseUrl}/api/users/updateUserDetail/${userId}`,
         updatePayload,
         {
           headers: {

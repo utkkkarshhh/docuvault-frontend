@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,16 +13,46 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const ProfileSection = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [dob, setDob] = useState("");
-  const [bio, setBio] = useState(
-    "I'm a software developer with a passion for creating user-friendly applications."
-  );
+  const [bio, setBio] = useState("");
   const [avatar, setAvatar] = useState("/placeholder.svg?height=100&width=100");
+
+  const { currentUser } = useSelector((state) => state.user);
+  const userId = currentUser.user_id;
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:9999/api/users/userDetail/${userId}`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (response.data.success) {
+          const userData = response.data.data;
+          setName(userData.name || "");
+          setEmail(userData.email || "");
+          setDob(userData.dob ? new Date(userData.dob) : "");
+          setBio(userData.bio || "");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId]);
 
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
@@ -35,11 +65,36 @@ const ProfileSection = () => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsEditing(false);
-    // Here you would typically send the updated data to your backend
-    console.log("Profile updated", { name, email, dob, bio, avatar });
+    try {
+      const updatePayload = {
+        name,
+        email,
+        dob: dob ? dob.toISOString().split("T")[0] : null,
+        bio,
+      };
+
+      const response = await axios.put(
+        `http://localhost:9999/api/users/updateUserDetail/${userId}`,
+        updatePayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        console.log("Profile updated successfully");
+      } else {
+        console.error("Failed to update profile:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    } finally {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -48,7 +103,7 @@ const ProfileSection = () => {
         <div className="flex items-center space-x-4">
           <Avatar className="w-24 h-24">
             <AvatarImage src={avatar} alt="Profile picture" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{name?.[0] || "U"}</AvatarFallback>
           </Avatar>
           {isEditing && (
             <div>

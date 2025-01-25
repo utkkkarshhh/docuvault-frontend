@@ -246,7 +246,6 @@ export default function ResponsiveHomepage() {
             </CardContent>
           </Card>
         </div>
-
         <DocumentsSection
           userId={currentUser?.user_id}
           baseUrl={baseUrl}

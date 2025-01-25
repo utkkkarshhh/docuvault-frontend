@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,114 +43,109 @@ const ProfileSection = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Your Profile</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex items-center space-x-4">
-            <Avatar className="w-24 h-24">
-              <AvatarImage src={avatar} alt="Profile picture" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            {isEditing && (
-              <div>
-                <Label htmlFor="avatar" className="cursor-pointer">
-                  <Input
-                    id="avatar"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleAvatarChange}
-                  />
-                  <Button type="button" variant="outline">
-                    Change Picture
-                  </Button>
-                </Label>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={!isEditing}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="dob">Date of Birth</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !dob && "text-muted-foreground"
-                  )}
-                  disabled={!isEditing}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dob ? format(dob, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={dob}
-                  onSelect={setDob}
-                  initialFocus
+    <div className="w-full max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <Avatar className="w-24 h-24">
+            <AvatarImage src={avatar} alt="Profile picture" />
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+          {isEditing && (
+            <div>
+              <Label htmlFor="avatar" className="cursor-pointer">
+                <Input
+                  id="avatar"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
                 />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              disabled={!isEditing}
-              className="min-h-[100px]"
-            />
-          </div>
-
-          {isEditing ? (
-            <div className="flex justify-end space-x-2">
-              <Button type="submit">Save Changes</Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </Button>
+                <Button type="button" variant="outline">
+                  Change Picture
+                </Button>
+              </Label>
             </div>
-          ) : (
-            <Button type="button" onClick={() => setIsEditing(true)}>
-              <Pencil className="w-4 h-4 mr-2" />
-              Edit Profile
-            </Button>
           )}
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={!isEditing}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={!isEditing}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="dob">Date of Birth</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !dob && "text-muted-foreground"
+                )}
+                disabled={!isEditing}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dob ? format(dob, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={dob}
+                onSelect={setDob}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="bio">Bio</Label>
+          <Textarea
+            id="bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            disabled={!isEditing}
+            className="min-h-[100px]"
+          />
+        </div>
+
+        {isEditing ? (
+          <div className="flex justify-end space-x-2">
+            <Button type="submit">Save Changes</Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Button type="button" onClick={() => setIsEditing(true)}>
+            <Pencil className="w-4 h-4 mr-2" />
+            Edit Profile
+          </Button>
+        )}
+      </form>
+    </div>
   );
 };
 

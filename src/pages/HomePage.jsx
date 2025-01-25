@@ -1,4 +1,7 @@
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import {
   Card,
   CardContent,
@@ -6,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import toast, { Toaster } from "react-hot-toast";
 import {
   Select,
   SelectContent,
@@ -18,9 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import { Upload, Loader2, FileText } from "lucide-react";
+import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection";
 
 export default function ResponsiveHomepage() {
   const [fileName, setFileName] = useState("");
@@ -28,6 +29,8 @@ export default function ResponsiveHomepage() {
   const [fileCategory, setFileCategory] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [documentsRefetchTrigger, setDocumentsRefetchTrigger] = useState(0);
 
   const baseUrl = import.meta.env.VITE_APP_BASE_URL;
   const { currentUser } = useSelector((state) => state.user);
@@ -90,32 +93,25 @@ export default function ResponsiveHomepage() {
         }
       );
 
-      // Check for specific success scenarios
       if (response.status === 200 || response.status === 201) {
-        // Reset form inputs
         resetForm();
-
-        // Show success message
         toast.success(
           response.data.message || "Document uploaded successfully!"
         );
+        setDocumentsRefetchTrigger((prev) => prev + 1);
       } else {
         toast.error("Upload failed. Please try again.");
       }
     } catch (error) {
-      // More detailed error handling
+      let errorMessage = "An error occurred during upload.";
+
       if (error.response) {
-        // The request was made and the server responded with a status code
-        const errorMessage =
-          error.response.data.message || "An error occurred during upload.";
-        toast.error(errorMessage);
+        errorMessage = error.response.data.message || errorMessage;
       } else if (error.request) {
-        // The request was made but no response was received
-        toast.error("No response from server. Please check your connection.");
-      } else {
-        // Something happened in setting up the request
-        toast.error("Error preparing upload. Please try again.");
+        errorMessage = "No response from server. Please check your connection.";
       }
+
+      toast.error(errorMessage);
       console.error("Upload error:", error);
     } finally {
       setIsLoading(false);
@@ -123,32 +119,39 @@ export default function ResponsiveHomepage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4 md:p-8">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8 text-center md:text-left">
-          Hi {currentUser?.username}, Welcome back!
-        </h1>
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h1 className="text-3xl font-bold mb-4 text-center md:text-left text-gray-800">
+            Welcome back, {currentUser?.username}!
+          </h1>
+          <p className="text-gray-600 text-center md:text-left">
+            Manage your documents and upload new files with ease.
+          </p>
+        </div>
 
-        <div className="grid gap-8 md:grid-cols-2">
-          <Card className="w-full">
+        <div className="grid gap-8 md:grid-cols-2 mb-12">
+          <Card className="w-full bg-white shadow-lg">
             <CardHeader>
-              <CardTitle>Upload Document</CardTitle>
+              <CardTitle className="text-2xl text-gray-800">
+                Upload Document
+              </CardTitle>
               <CardDescription>
                 Drag and drop your file or click to browse
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors bg-gray-50"
                 onClick={() => document.getElementById("fileInput").click()}
               >
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-sm text-gray-600">
+                <Upload className="mx-auto h-16 w-16 text-gray-400" />
+                <p className="mt-4 text-sm text-gray-600">
                   Upload your file or drag and drop it here
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Only .doc, .docx, .pdf, .png, .jpg, .jpeg
+                <p className="mt-2 text-xs text-gray-500">
+                  Supported formats: .doc, .docx, .pdf, .png, .jpg, .jpeg
                 </p>
                 <input
                   type="file"
@@ -160,25 +163,30 @@ export default function ResponsiveHomepage() {
                 />
               </div>
               {selectedFile && (
-                <p className="mt-2 text-sm text-green-600">
-                  File selected: {selectedFile.name}
-                </p>
+                <div className="mt-4 p-3 bg-green-100 rounded-md flex items-center">
+                  <FileText className="h-5 w-5 text-green-600 mr-2" />
+                  <p className="text-sm text-green-700">
+                    File selected: {selectedFile.name}
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="w-full">
+          <Card className="w-full bg-white shadow-lg">
             <CardHeader>
-              <CardTitle>Add file information</CardTitle>
+              <CardTitle className="text-2xl text-gray-800">
+                File Information
+              </CardTitle>
               <CardDescription>
-                Please tell us something about this file
+                Provide details about your document
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">
-                    What would you like to call it? *
+                  <Label htmlFor="name" className="text-gray-700">
+                    Document Name *
                   </Label>
                   <Input
                     id="name"
@@ -186,25 +194,30 @@ export default function ResponsiveHomepage() {
                     value={fileName}
                     onChange={(e) => setFileName(e.target.value)}
                     required
+                    className="border-gray-300 focus:border-blue-400 focus:ring-blue-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Add a description</Label>
+                  <Label htmlFor="description" className="text-gray-700">
+                    Description
+                  </Label>
                   <Textarea
                     id="description"
                     placeholder="Enter file description"
-                    className="min-h-[100px]"
+                    className="min-h-[100px] border-gray-300 focus:border-blue-400 focus:ring-blue-400"
                     value={fileDescription}
                     onChange={(e) => setFileDescription(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">File Category *</Label>
+                  <Label htmlFor="category" className="text-gray-700">
+                    File Category *
+                  </Label>
                   <Select
                     value={fileCategory}
                     onValueChange={(value) => setFileCategory(value)}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full border-gray-300 focus:border-blue-400 focus:ring-blue-400">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -215,7 +228,11 @@ export default function ResponsiveHomepage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={isLoading}
+                >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -229,6 +246,12 @@ export default function ResponsiveHomepage() {
             </CardContent>
           </Card>
         </div>
+
+        <DocumentsSection
+          userId={currentUser?.user_id}
+          baseUrl={baseUrl}
+          refetchTrigger={documentsRefetchTrigger}
+        />
       </div>
     </div>
   );

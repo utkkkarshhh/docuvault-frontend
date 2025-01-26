@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Menu, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
@@ -338,6 +338,18 @@ const AccountSettings = ({
               className="max-w-md"
               disabled={!isAccountEditing}
             />
+          </div>
+          <h2 className="text-2xl font-semibold mb-4">Email Preferences</h2>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="subscribe"
+              checked={subscribeToEmails}
+              onCheckedChange={onSubscribeChange}
+              disabled={!isAccountEditing}
+            />
+            <label htmlFor="subscribe" className="text-sm font-medium">
+              Subscribe to emails
+            </label>
           </div>
         </div>
         {isAccountEditing && (

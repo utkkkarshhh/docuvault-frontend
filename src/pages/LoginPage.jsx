@@ -12,10 +12,13 @@ import {
   signInFailure,
 } from "@/redux/user/userSlice";
 import { login } from "@/redux/auth/authSlice";
+import { FiLock, FiMail, FiEye, FiEyeOff } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -113,71 +116,162 @@ const LoginPage = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login Now</h1>
-            <p className="text-balance text-muted-foreground">
-              Please enter your details!
-            </p>
-          </div>
-          <form className="signup-form" onSubmit={handleSubmit}>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Username/Email</Label>
-                <Input
-                  id="identifier"
-                  type="text"
-                  placeholder="name@domain.com or name"
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Welcome back
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Sign in to your account
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <Label htmlFor="identifier" className="sr-only">
+                Username or Email
+              </Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiMail
+                    className="h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
                 </div>
                 <Input
-                  onChange={(e) => setPassword(e.target.value)}
-                  id="password"
-                  type="password"
-                  placeholder="●●●●●●●●"
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  autoComplete="username"
                   required
+                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  placeholder="Username or email address"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   disabled={loading}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-              <Button variant="outline" className="w-full" disabled={loading}>
-                Login with Google
-              </Button>
             </div>
-          </form>
-          <Toaster position="top-center" reverseOrder={false} />
-          <div className="mt-4 text-center text-sm">
-            Dont have an account?{" "}
-            <Link to="/register" className="underline">
+            <div>
+              <Label htmlFor="password" className="sr-only">
+                Password
+              </Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiLock
+                    className="h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
+                  >
+                    {showPassword ? (
+                      <FiEyeOff className="h-5 w-5" aria-hidden="true" />
+                    ) : (
+                      <FiEye className="h-5 w-5" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+              />
+              <Label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                Remember me
+              </Label>
+            </div>
+
+            <div className="text-sm">
+              <a
+                href="#"
+                className="font-medium text-primary hover:text-primary-dark"
+              >
+                Forgot your password?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <Button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+          </div>
+        </form>
+
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-50 text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              disabled={loading}
+            >
+              <FcGoogle className="mr-2 h-5 w-5" />
+              Sign in with Google
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-sm">
+          <p className="text-gray-600">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-medium text-primary hover:text-primary-dark"
+            >
               Sign up
             </Link>
-          </div>
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
+          </p>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 };

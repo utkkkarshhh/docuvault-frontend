@@ -144,7 +144,7 @@ const ProfileSection = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={!isEditing}
+            disabled={true}
           />
         </div>
 

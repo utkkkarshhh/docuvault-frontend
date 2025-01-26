@@ -14,7 +14,9 @@ export default function LandingPageCard(props) {
           <p>Why wait? Experience the future of document management today!</p>
         </div>
         <div className="landing-page-card-bottom-line-button">
-          <p><Link to="/register">Register Now</Link></p>
+          <p>
+            <Link to="/register">Register Now</Link>
+          </p>
           <FaArrowRightLong />
         </div>
       </div>

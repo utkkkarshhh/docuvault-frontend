@@ -63,28 +63,20 @@ const Avatar = ({ name }) => {
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <Link to="/settings">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Github className="mr-2 h-4 w-4" />
-          <Link to="https://github.com/utkkkarshhh/docuvault-frontend">
-            GitHub
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
           <LifeBuoy className="mr-2 h-4 w-4" />
           <Link to="mailto:utkarshbhardwajmail@gmail.com">Support</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Cloud className="mr-2 h-4 w-4" />
-          <span>API</span>
+          <Link to="https://docuvault-backend.vercel.app/">
+          <span>APIs</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
@@ -95,5 +87,6 @@ const Avatar = ({ name }) => {
     </DropdownMenu>
   );
 };
+
 
 export default Avatar;

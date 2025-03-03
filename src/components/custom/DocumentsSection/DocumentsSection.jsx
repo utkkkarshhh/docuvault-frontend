@@ -159,7 +159,7 @@ const DocumentsSection = ({ userId, baseUrl, refetchTrigger = 0 }) => {
                 {documents.map((doc) => (
                   <TableRow key={doc.id} className="hover:bg-gray-50">
                     <TableCell>{getFileIcon(doc.format)}</TableCell>
-                    <TableCell className="font-medium">{doc.name}</TableCell>
+                    <TableCell className="font-medium">{doc.upload_name}</TableCell>
                     <TableCell>{doc.description}</TableCell>
                     <TableCell>{doc.type}</TableCell>
                     <TableCell>

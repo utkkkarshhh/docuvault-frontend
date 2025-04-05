@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const DownloadModal = ({ isOpen, onClose, onDownload, document }) => {
+const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
   const [fileSize, setFileSize] = useState("");
@@ -112,4 +112,4 @@ const DownloadModal = ({ isOpen, onClose, onDownload, document }) => {
   );
 };
 
-export default DownloadModal;
+export default ConvertDownloadModal;

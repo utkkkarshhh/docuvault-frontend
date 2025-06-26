@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import {
   Card,
@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Upload, Loader2, FileText } from "lucide-react";
 import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection";
+import { apiEndpoints, baseUrl } from "@/constants/constants";
 
 export default function ResponsiveHomepage() {
   const [fileName, setFileName] = useState("");
@@ -31,9 +32,29 @@ export default function ResponsiveHomepage() {
   const [isLoading, setIsLoading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [documentsRefetchTrigger, setDocumentsRefetchTrigger] = useState(0);
-
-  const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+  const [documentTypes, setDocumentTypes] = useState([]);
+  
   const { currentUser } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const fetchDocumentTypes = async () => {
+      try {
+        const response = await axios.get(apiEndpoints.categoryMaster);
+        if (Array.isArray(response.data.data)) {
+          setDocumentTypes(response.data.data);
+        } else {
+          throw new Error("Invalid response format");
+        }
+      } catch (error) {
+        console.error("Error fetching document types:", error);
+        toast.error("Failed to load file categories");
+      }
+    };
+
+    if (baseUrl) {
+      fetchDocumentTypes();
+    }
+  }, [baseUrl]);
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -74,7 +95,6 @@ export default function ResponsiveHomepage() {
     formData.append("description", fileDescription);
     formData.append("type", fileCategory);
     formData.append("file", selectedFile);
-    formData.append("user_id", currentUser.user_id);
 
     try {
       setIsLoading(true);
@@ -83,10 +103,7 @@ export default function ResponsiveHomepage() {
         throw new Error("Base URL is not defined");
       }
 
-      const response = await axios.post(
-        `${baseUrl}/api/doc/uploadDocument`,
-        formData,
-        {
+      const response = await axios.post(apiEndpoints.uploadDocument, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -120,7 +137,6 @@ export default function ResponsiveHomepage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4 md:p-8">
-      <Toaster position="top-right" reverseOrder={false} />
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold mb-4 text-center md:text-left text-gray-800">
@@ -221,10 +237,11 @@ export default function ResponsiveHomepage() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="public_id">Public ID</SelectItem>
-                      <SelectItem value="document">Legal Document</SelectItem>
-                      <SelectItem value="contract">Contract</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      {documentTypes.map((type) => (
+                        <SelectItem key={type.id} value={String(type.id)}>
+                          {type.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

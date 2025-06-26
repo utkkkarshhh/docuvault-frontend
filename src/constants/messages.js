@@ -1,0 +1,3 @@
+const responseMessages = {}
+
+export { responseMessages }

@@ -12,17 +12,18 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
-const DeleteAccountModal = ({ isOpen, onClose }) => {
+const DeleteAccountModal = ({ isOpen, onClose, onConfirmDelete }) => {
   const [reason, setReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
 
   const handleDelete = () => {
-    // Implement delete account logic here
-    console.log(
-      "Deleting account with reason:",
-      reason === "Other" ? otherReason : reason
-    );
-    onClose();
+    const finalReason = reason === "Other" ? otherReason.trim() : reason;
+
+    if (!finalReason) {
+      toast.error("Please select or enter a reason for deletion.");
+      return;
+    }
+    onConfirmDelete(finalReason);
   };
 
   return (

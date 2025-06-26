@@ -17,21 +17,21 @@ import SettingsPage from "@/pages/SettingsPage";
 import Footer from "@/components/Reusables/Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUserFromLocalStorage } from "@/utils/CheckAuthState";
+import { Toaster } from "react-hot-toast";
+
 
 function App() {
   const dispatch = useDispatch();
-  
-  // Load user authentication state from localStorage on app load
   useEffect(() => {
     loadUserFromLocalStorage(dispatch);
   }, [dispatch]);
-
-  // Get authentication state from Redux store
+  
   const isAuthenticated = useSelector((state) => !!state.user.currentUser);
 
   return (
     <Router>
       <Navbar />
+      <Toaster position="top-right" reverseOrder={false} /> 
       <RoutingTable>
         {/* Authenticated Routes / Private Routes */}
         <Route

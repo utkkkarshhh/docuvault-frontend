@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { apiEndpoints, baseUrl, registerToken } from "../constants/constants";
+import { GoogleLogin } from '@react-oauth/google';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -14,9 +16,6 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  const registerToken = import.meta.env.VITE_APP_REGISTER_TOKEN;
-  const baseUrl = import.meta.env.VITE_APP_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,54 +31,42 @@ const RegisterPage = () => {
         throw new Error("Base URL is not defined");
       }
 
-      const response = await axios.post(`${baseUrl}/api/auth/signup`, payload, {
+      const response = await axios.post(apiEndpoints.signUp, payload, {
         headers: { "Content-Type": "application/json" },
       });
 
-      if (response.status === 201) {
-        toast.success("Sign-up successful!");
+      const { success, message, errors } = response.data;
+
+      if (success) {
+        toast.success(message || "Sign-up successful!");
         setEmail("");
         setUsername("");
         setPassword("");
         navigate("/login");
       } else {
-        toast.error("Unexpected response from server.");
+        if (Array.isArray(errors)) {
+          errors.forEach((err) => toast.error(err));
+        } else {
+          toast.error("Sign-up failed.");
+        }
       }
     } catch (error) {
-      const err =
-        error.response && error.response.data && error.response.data.message
-          ? error.response.data.message
-          : error.message || "An error occurred";
-
-      console.error("Error during sign up:", err);
+      console.error("Sign-up error:", error);
 
       if (error.response) {
-        const status = error.response.status;
-        const errorMessage = err;
-
-        switch (status) {
-          case 400:
-            toast.error(`${errorMessage}`); // Bad Request
-            break;
-          case 401:
-            toast.error(`${errorMessage}`); // Unauthorized
-            break;
-          case 403:
-            toast.error(`${errorMessage}`); // Forbidden
-            break;
-          case 404:
-            toast.error(`${errorMessage}`); // Not Found
-            break;
-          case 500:
-            toast.error(`${errorMessage}`); // Internal Server Error
-            break;
-          default:
-            toast.error(`${errorMessage}`); // Other errors
+        const data = error.response.data;
+        if (data?.errors && Array.isArray(data.errors)) {
+          data.errors.forEach((err) => toast.error(err));
+        } else if (data?.message) {
+          toast.error(data.message);
+        } else {
+          toast.error(`Unexpected error: ${error.response.status}`);
         }
+
       } else if (error.request) {
         toast.error("No response received from server.");
       } else {
-        toast.error("Error setting up request: " + error.message);
+        toast.error("Error: " + error.message);
       }
     }
   };
@@ -211,13 +198,46 @@ const RegisterPage = () => {
           </div>
 
           <div className="mt-6">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              <FcGoogle className="mr-2 h-5 w-5" />
-              Sign up with Google
-            </Button>
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                const idToken = credentialResponse.credential;
+
+                try {
+                  const response = await axios.post(`${baseUrl}/api/v1/Google/OAuth`, {
+                    id_token: idToken,
+                  });
+
+                  const { success, token, user, message } = response.data;
+                  console.log("Success block reached, message:", message);
+
+                  if (success && token) {
+                    toast.success(message || "Google Sign-in successful!");
+
+                    localStorage.setItem("authToken", token);
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+                    dispatch(signInSuccess({ user }));
+                    dispatch(login(user));
+
+                    setTimeout(() => {
+                      navigate("/home");
+                    }, 1000);
+                  } else {
+                    const parsedError = parseApiError(response);
+                    toast.error(parsedError);
+                    dispatch(signInFailure(parsedError));
+                  }
+                } catch (error) {
+                  const parsedError = parseApiError(error);
+                  toast.error(parsedError);
+                  dispatch(signInFailure(parsedError));
+                }
+              }}
+              onError={() => {
+                toast.error("Google sign-in failed.");
+              }}
+            />
           </div>
         </div>
 

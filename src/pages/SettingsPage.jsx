@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Menu, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,15 @@ import { Pencil } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteAccountModal from "@/components/custom/Modals/DeleteAccountModal";
 import { useSelector } from "react-redux";
+import { apiEndpoints } from "@/constants/constants";
+import { parseApiError } from "@/utils/parseApiError";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/auth/authSlice";
+import { clearState } from "@/redux/user/userSlice";
+
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState("Account");
@@ -21,26 +27,30 @@ const SettingsPage = () => {
   const { currentUser } = useSelector((state) => state.user);
 
   const userId = currentUser.user_id;
-  const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+  const baseUrl = import.meta.env.VITE_APP_BASE_URL
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(
-          `${baseUrl}/api/users/userLoginDetails/${userId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axios.get(apiEndpoints.getUserDetails, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-        const { email, username, is_subscribed_to_emails } = response.data.data;
-        setEmail(email);
-        setUsername(username);
-        setIsSubscribedToEmail(is_subscribed_to_emails);
+        if (response.data.success) {
+          toast.success(response.data.message || "User details fetched successfully");
+          const { email, username, is_subscribed_to_emails } = response.data.data;
+          setEmail(email);
+          setUsername(username);
+          setIsSubscribedToEmail(is_subscribed_to_emails);
+        } else {
+          toast.error(response.data?.message || "Failed to fetch user details");
+        }
       } catch (error) {
-        toast.error("Failed to fetch user details");
+        toast.error(parseApiError(error));
         console.error("Error fetching user details:", error);
       }
     };
@@ -49,7 +59,6 @@ const SettingsPage = () => {
   }, [userId, baseUrl]);
 
   const handleUpdateAccountSettings = async () => {
-    // Validate inputs
     if (!email || !username) {
       toast.error("Email and username cannot be empty");
       return;
@@ -60,14 +69,16 @@ const SettingsPage = () => {
       saveButton.disabled = true;
     }
 
+    const request_payload = {
+      username,
+      email,
+      is_subscribed_to_emails: isSubscribedToEmails ? "1" : "0",
+    };
+
     try {
-      const response = await axios.put(
-        `${baseUrl}/api/users/updateUserLogin/${userId}`,
-        {
-          username,
-          email,
-          is_subscribed_to_emails: isSubscribedToEmails ? "1" : "0",
-        },
+      const response = await axios.patch(
+        apiEndpoints.updateUserDetails,
+        request_payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -76,16 +87,12 @@ const SettingsPage = () => {
       );
 
       if (response.data.success) {
-        toast.success("Account settings updated successfully");
+        toast.success(response.data.message || "Account settings updated successfully");
       } else {
-        toast.error(
-          response.data.message || "Failed to update account settings"
-        );
+        toast.error(response.data?.message || "Failed to update account settings");
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Error updating account settings"
-      );
+      toast.error(parseApiError(error));
       console.error("Error updating account settings:", error);
     } finally {
       if (saveButton) {
@@ -99,14 +106,16 @@ const SettingsPage = () => {
     newPassword,
     confirmPassword
   ) => {
+    const request_payload = {
+      current_password: currentPassword,
+      new_password: newPassword,
+      confirm_new_password: confirmPassword,
+    };
+
     try {
-      const response = await axios.put(
-        `${baseUrl}/api/users/updateUserPassword/${userId}`,
-        {
-          currentPassword,
-          newPassword,
-          confirmNewPassword: confirmPassword,
-        },
+      const response = await axios.patch(
+        apiEndpoints.updateUserPassword,
+        request_payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -118,17 +127,43 @@ const SettingsPage = () => {
         toast.success(response.data.message || "Password updated successfully");
         return true;
       } else {
-        toast.error(response.data.message || "Failed to update password");
+        toast.error(response.data?.message || "Failed to update password");
         return false;
       }
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message ||
-        "Error updating password. Please try again.";
-
-      toast.error(errorMessage);
+      toast.error(parseApiError(error));
       console.error("Password update error:", error);
       return false;
+    }
+  };
+
+  const handleDeleteAccount = async (reasonForDeletion) => {
+    try {
+      const request_payload = {
+        reason_for_deletion: reasonForDeletion,
+      };
+
+      const response = await axios.patch(apiEndpoints.deleteUser, request_payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message || "Account deleted successfully");
+        dispatch(logout());
+        dispatch(clearState());
+        localStorage.clear();
+        delete axios.defaults.headers.common["Authorization"];
+        navigate("/", { replace: true });
+      } else {
+        toast.error(response.data?.message || "Failed to delete account");
+      }
+    } catch (error) {
+      toast.error(parseApiError(error));
+      console.error("Error deleting account:", error);
+    } finally {
+      setIsDeleteModalOpen(false);
     }
   };
 
@@ -164,7 +199,6 @@ const SettingsPage = () => {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-background p-4 md:gap-8 md:p-10">
-        <Toaster position="top-right" reverseOrder={false} />
         <div className="mx-auto w-full max-w-6xl">
           <div className="flex items-center justify-between md:justify-start mb-4 md:mb-0">
             <Sheet>
@@ -230,6 +264,7 @@ const SettingsPage = () => {
       <DeleteAccountModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
+        onConfirmDelete={handleDeleteAccount}
       />
     </div>
   );

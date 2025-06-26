@@ -14,7 +14,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
+import { apiEndpoints } from "@/constants/constants";
 
 const ProfileSection = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,17 +33,11 @@ const ProfileSection = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        if (!baseUrl) {
-          throw new Error("Base URL is not defined");
-        }
-        const response = await axios.get(
-          `${baseUrl}/api/users/userDetail/${userId}`,
-          {
-            headers: {
-              Accept: "application/json",
-            },
-          }
-        );
+        const response = await axios.get(apiEndpoints.getUserDetails, {
+          headers: {
+            Accept: "application/json"
+          },
+        });
 
         if (response.data.success) {
           const userData = response.data.data;
@@ -49,14 +45,28 @@ const ProfileSection = () => {
           setEmail(userData.email || "");
           setDob(userData.dob ? new Date(userData.dob) : "");
           setBio(userData.bio || "");
+
+          toast.success(response.data.message || "User details loaded");
+        } else {
+          const errorMsg =
+            Array.isArray(response.data.errors) && response.data.errors.length > 0
+              ? response.data.errors[0]
+              : response.data.message || "Failed to fetch user details";
+
+          toast.error(errorMsg);
         }
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error("Fetch error:", error);
+        const errMsg =
+          error.response?.data?.errors?.[0] ||
+          error.response?.data?.message ||
+          "Error fetching user details";
+        toast.error(errMsg);
       }
     };
 
     fetchUserDetails();
-  }, []);
+  }, [currentUser.token]);
 
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
@@ -79,23 +89,32 @@ const ProfileSection = () => {
         bio,
       };
 
-      const response = await axios.put(
-        `${baseUrl}/api/users/updateUserDetail/${userId}`,
+      const response = await axios.patch(
+        apiEndpoints.updateUserDetails,
         updatePayload,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
         }
       );
 
       if (response.data.success) {
-        console.log("Profile updated successfully");
+        toast.success(response.data.message || "Profile updated successfully");
       } else {
-        console.error("Failed to update profile:", response.data.message);
+        const errorMsg =
+          Array.isArray(response.data.errors) && response.data.errors.length > 0
+            ? response.data.errors[0]
+            : response.data.message || "Failed to update profile";
+        toast.error(errorMsg);
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Update error:", error);
+      const errMsg =
+        error.response?.data?.errors?.[0] ||
+        error.response?.data?.message ||
+        "Error updating profile";
+      toast.error(errMsg);
     } finally {
       setIsEditing(false);
     }

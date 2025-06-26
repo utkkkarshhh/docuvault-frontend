@@ -36,6 +36,7 @@ import {
 import DeleteModal from "@/components/custom/Modals/DeleteModal";
 import ConvertDownloadModal from "@/components/custom/Modals/ConvertDownloadModal";
 import { useSelector } from "react-redux";
+import { apiEndpoints, baseUrl, registerToken } from "../../../constants/constants";
 
 const getFileIcon = (format) => {
   switch (format) {
@@ -67,39 +68,53 @@ const DocumentsSection = ({ userId, baseUrl, refetchTrigger = 0 }) => {
 
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `${baseUrl}/api/doc/getAllDocuments?user_id=${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(apiEndpoints.getAllUserDocuments, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.data.success) {
-        setDocuments(response.data.documents);
+        setDocuments(response.data.data || []);
+        toast.success(response.data.message || "Documents loaded successfully");
       } else {
-        toast.error("Failed to fetch documents");
+        const errorMsg =
+          Array.isArray(response.data.errors) && response.data.errors.length > 0
+            ? response.data.errors[0]
+            : response.data.message || "Failed to fetch documents";
+
+        toast.error(errorMsg);
       }
     } catch (error) {
       console.error("Error fetching documents:", error);
-      toast.error("Error loading documents");
+
+      const errorMsg =
+        error.response?.data?.errors?.[0] ||
+        error.response?.data?.message ||
+        "Error loading documents";
+
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
-  }, [userId, baseUrl, refetchTrigger]);
+  }, [userId, currentUser.token, refetchTrigger]);
 
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
 
   const handleDelete = async (id) => {
+    const requestPayload = {
+      document_id: id,
+    };
+
     try {
-      const response = await axios.delete(
-        `${baseUrl}/api/doc/deleteDocument/${id}`,
+      const response = await axios.post(
+        apiEndpoints.deleteDocument,
+        requestPayload,
         {
           headers: {
-            Authorization: `Bearer ${currentUser.token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -110,11 +125,23 @@ const DocumentsSection = ({ userId, baseUrl, refetchTrigger = 0 }) => {
         toast.success("Document deleted successfully");
         setIsDeleteModalOpen(false);
       } else {
-        toast.error(response.data.message || "Failed to delete document");
+        // Handle structured error messages
+        const errorMsg =
+          Array.isArray(response.data.errors) && response.data.errors.length > 0
+            ? response.data.errors[0]
+            : response.data.message || "Failed to delete document";
+
+        toast.error(errorMsg);
       }
     } catch (err) {
       console.error("Delete error:", err);
-      toast.error(err.response?.data?.message || "Error deleting document");
+
+      const errorMsg =
+        err.response?.data?.errors?.[0] ||
+        err.response?.data?.message ||
+        "Error deleting document";
+
+      toast.error(errorMsg);
     }
   };
 
@@ -177,7 +204,7 @@ const DocumentsSection = ({ userId, baseUrl, refetchTrigger = 0 }) => {
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          {documents.length === 0 ? (
+          {Array.isArray(documents) && documents.length === 0 ? (
             <p className="text-center text-gray-500">
               No documents uploaded yet
             </p>
@@ -201,7 +228,7 @@ const DocumentsSection = ({ userId, baseUrl, refetchTrigger = 0 }) => {
                       {doc.upload_name}
                     </TableCell>
                     <TableCell>{doc.description}</TableCell>
-                    <TableCell>{doc.type}</TableCell>
+                    <TableCell>{doc.type?.name || "—"}</TableCell>
                     <TableCell>
                       {new Date(doc.created_at).toLocaleDateString()}
                     </TableCell>

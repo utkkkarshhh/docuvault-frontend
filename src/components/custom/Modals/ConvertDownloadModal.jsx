@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {supportedTypeMapping, supportedFormatMapping} from "@/constants/constants"
 
 const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
   const [width, setWidth] = useState("");
@@ -26,11 +27,12 @@ const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
 
   useEffect(() => {
     if (document) {
-      setNewFormat(document.format);
+      setNewFormat("");
     }
   }, [document]);
 
-  const isImage = document && ["png", "jpg", "jpeg"].includes(document.format);
+  const isImage = document && supportedTypeMapping.image.includes(document.format);
+  const supportedFormats = document ? supportedFormatMapping[document.format] || [] : [];
 
   const handleDownload = () => {
     onDownload({
@@ -41,9 +43,7 @@ const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
     });
   };
 
-  if (!document) {
-    return null;
-  }
+  if (!document) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -51,9 +51,10 @@ const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
         <DialogHeader>
           <DialogTitle>Download {document.name}</DialogTitle>
           <DialogDescription>
-            Current file format: {document.format}
+            Current file format: {document.format.toUpperCase()}
           </DialogDescription>
         </DialogHeader>
+
         <div className="grid gap-4 py-4">
           {isImage && (
             <>
@@ -86,6 +87,7 @@ const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
               </div>
             </>
           )}
+
           <div className="grid grid-cols-2 items-center gap-4">
             <Label htmlFor="newFormat">New Format</Label>
             <Select value={newFormat} onValueChange={setNewFormat}>
@@ -93,19 +95,23 @@ const ConvertDownloadModal = ({ isOpen, onClose, onDownload, document }) => {
                 <SelectValue placeholder="Select format" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pdf">PDF</SelectItem>
-                <SelectItem value="docx">DOCX</SelectItem>
-                <SelectItem value="png">PNG</SelectItem>
-                <SelectItem value="jpg">JPG</SelectItem>
+                {supportedFormats.map((format) => (
+                  <SelectItem key={format} value={format}>
+                    {format.toUpperCase()}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleDownload}>Download</Button>
+          <Button onClick={handleDownload} disabled={!newFormat}>
+            Download
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

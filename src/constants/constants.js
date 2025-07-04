@@ -5,8 +5,10 @@ const apiEndpoints = {
     // Authentication Endpoints
     "signUp" : `${baseUrl}/api/v1/SignUp`,
     "signIn" : `${baseUrl}/api/v1/SignIn`,
-    "signUnWithGoogle": `${baseUrl}/api/v1/SignIn`,
-    "signInWithGoogle": `${baseUrl}/api/v1/SignIn`,
+    "signInWithGoogle": `${baseUrl}/api/v1/Google/OAuth`,
+    "forgetPassword": `${baseUrl}/api/v1/ForgetPassword`,
+    "verifyOTP": `${baseUrl}/api/v1/VerifyOTP`,
+    "resetPassword": `${baseUrl}/api/v1/ResetPassword`,
 
     // Document Endpoints
     "getAllUserDocuments" : `${baseUrl}/api/v1/Documents/DocumentsList`,
@@ -21,5 +23,23 @@ const apiEndpoints = {
     "deleteUser": `${baseUrl}/api/v1/User/Delete`,
 }
 
-export {registerToken, baseUrl, apiEndpoints}
+    const supportedTypeMapping = {
+    document: ["pdf", "doc", "docx", "xls", "xlsx", "csv"],
+    image: ["jpeg", "jpg", "png", "svg"],
+    };
+
+    const supportedFormatMapping = {
+    csv: ["xls", "xlsx"],
+    xls: ["csv", "xlsx"],
+    xlsx: ["csv", "xls"],
+    doc: ["pdf", "docx"],
+    docx: ["pdf", "doc"],
+    pdf: ["doc", "docx"],
+    jpeg: ["jpg", "png", "svg"],
+    jpg: ["jpeg", "png", "svg"],
+    png: ["jpeg", "jpg", "svg"],
+    svg: ["jpeg", "jpg", "png"],
+    };
+
+export {registerToken, baseUrl, apiEndpoints, supportedTypeMapping, supportedFormatMapping}
 

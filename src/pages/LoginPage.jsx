@@ -11,28 +11,18 @@ import { useDispatch, useSelector } from "react-redux"
 import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlice"
 import { login } from "@/redux/auth/authSlice"
 import { FiLock, FiMail, FiEye, FiEyeOff, FiX } from "react-icons/fi"
-import { apiEndpoints, baseUrl } from "../constants/constants"
-import { GoogleLogin } from "@react-oauth/google"
 import { parseApiError } from "@/utils/parseApiError"
+import { loginUser } from "@/actions/authActions"
+import GoogleSignInButton from "@/components/oauth/GoogleSignInButton"
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
-  // Forgot Password States
-  const [showForgotModal, setShowForgotModal] = useState(false)
-  const [showOtpModal, setShowOtpModal] = useState(false)
-  const [forgotIdentifier, setForgotIdentifier] = useState("")
-  const [otp, setOtp] = useState("")
-  const [isRequestingOtp, setIsRequestingOtp] = useState(false)
-  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
-  const [canResendOtp, setCanResendOtp] = useState(false)
-  const [resendTimer, setResendTimer] = useState(30)
-
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { loading, error } = useSelector((state) => state.user)
+  const { loading } = useSelector((state) => state.user)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -48,17 +38,8 @@ const LoginPage = () => {
     }
 
     try {
-      if (!baseUrl) {
-        throw new Error("Base URL is not defined")
-      }
-
       dispatch(signInStart())
-
-      const response = await axios.post(apiEndpoints.signIn, payload, {
-        headers: { "Content-Type": "application/json" },
-      })
-
-      const { success, token, user, errors } = response.data
+      const { success, token, user, errors } = await loginUser(payload)
 
       if (success && token) {
         toast.success("Login Successful!")
@@ -85,172 +66,18 @@ const LoginPage = () => {
         }
       }
     } catch (error) {
-      console.error("Login error:", error)
-
       localStorage.removeItem("authToken")
       delete axios.defaults.headers.common["Authorization"]
-
-      if (error.response) {
-        const data = error.response.data
-        const serverErrors = data?.errors || [data?.message] || ["Login failed"]
-
-        dispatch(signInFailure(serverErrors[0]))
-
-        serverErrors.forEach((msg) => toast.error(msg))
-      } else if (error.request) {
-        toast.error("Cannot reach server. Please check your connection.")
-      } else {
-        toast.error("Login failed: " + error.message)
-      }
+      const parsedError = parseApiError(error)
+      dispatch(signInFailure(parsedError))
+      toast.error(parsedError)
     }
   }
 
   const handleForgotPassword = async (e) => {
-    e.preventDefault()
-
-    if (!forgotIdentifier.trim()) {
-      toast.error("Please enter your username or email")
-      return
-    }
-
-    setIsRequestingOtp(true)
-
-    try {
-      const response = await axios.post(
-        `${baseUrl}/api/v1/ForgetPassword`,
-        {
-          identifier: forgotIdentifier.trim(),
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      )
-
-      const { success, message, errors } = response.data
-
-      if (success) {
-        toast.success(message || "OTP sent successfully")
-        setShowForgotModal(false)
-        setShowOtpModal(true)
-        startResendTimer()
-      } else {
-        if (Array.isArray(errors)) {
-          errors.forEach((msg) => toast.error(msg))
-        } else {
-          toast.error("Failed to send OTP")
-        }
-      }
-    } catch (error) {
-      console.error("Forgot password error:", error)
-
-      if (error.response?.data?.errors) {
-        error.response.data.errors.forEach((msg) => toast.error(msg))
-      } else {
-        toast.error("Failed to send OTP. Please try again.")
-      }
-    } finally {
-      setIsRequestingOtp(false)
-    }
-  }
-
-  const handleOtpVerification = async (e) => {
-    e.preventDefault()
-
-    if (!otp.trim() || otp.length !== 6) {
-      toast.error("Please enter a valid 6-digit OTP")
-      return
-    }
-
-    setIsVerifyingOtp(true)
-
-    try {
-      // You can implement OTP verification API call here
-      // For now, just showing success message
-      toast.success("OTP verified successfully! You can now reset your password.")
-
-      // Close modals and reset states
-      setShowOtpModal(false)
-      resetForgotPasswordStates()
-
-      // Navigate to password reset page or show password reset form
-      // navigate("/reset-password");
-    } catch (error) {
-      console.error("OTP verification error:", error)
-      toast.error("Invalid OTP. Please try again.")
-    } finally {
-      setIsVerifyingOtp(false)
-    }
-  }
-
-  const handleResendOtp = async () => {
-    if (!canResendOtp) return
-
-    setIsRequestingOtp(true)
-
-    try {
-      const response = await axios.post(
-        `${baseUrl}/api/v1/ForgetPassword`,
-        {
-          identifier: forgotIdentifier.trim(),
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      )
-
-      const { success, message, errors } = response.data
-
-      if (success) {
-        toast.success("OTP resent successfully")
-        startResendTimer()
-      } else {
-        if (Array.isArray(errors)) {
-          errors.forEach((msg) => toast.error(msg))
-        }
-      }
-    } catch (error) {
-      console.error("Resend OTP error:", error)
-      if (error.response?.data?.errors) {
-        error.response.data.errors.forEach((msg) => toast.error(msg))
-      } else {
-        toast.error("Failed to resend OTP")
-      }
-    } finally {
-      setIsRequestingOtp(false)
-    }
-  }
-
-  const startResendTimer = () => {
-    setCanResendOtp(false)
-    setResendTimer(30)
-
-    const timer = setInterval(() => {
-      setResendTimer((prev) => {
-        if (prev <= 1) {
-          setCanResendOtp(true)
-          clearInterval(timer)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
-
-  const resetForgotPasswordStates = () => {
-    setForgotIdentifier("")
-    setOtp("")
-    setCanResendOtp(false)
-    setResendTimer(30)
-  }
-
-  const closeForgotModal = () => {
-    setShowForgotModal(false)
-    resetForgotPasswordStates()
-  }
-
-  const closeOtpModal = () => {
-    setShowOtpModal(false)
-    resetForgotPasswordStates()
+    setTimeout(() => {
+      navigate("/forget_password")
+    }, 0)
   }
 
   const togglePasswordVisibility = () => {
@@ -330,7 +157,7 @@ const LoginPage = () => {
               <div className="text-sm">
                 <button
                   type="button"
-                  onClick={() => setShowForgotModal(true)}
+                  onClick={() => handleForgotPassword()}
                   className="font-medium text-primary hover:text-primary-dark"
                 >
                   Forgot your password?
@@ -360,46 +187,7 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-6">
-              <GoogleLogin
-                onSuccess={async (credentialResponse) => {
-                  const idToken = credentialResponse.credential
-
-                  try {
-                    const response = await axios.post(`${baseUrl}/api/v1/Google/OAuth`, {
-                      id_token: idToken,
-                    })
-
-                    const { success, token, user, message } = response.data
-                    console.log("Success block reached, message:", message)
-
-                    if (success && token) {
-                      toast.success(message || "Google Sign-in successful!")
-
-                      localStorage.setItem("authToken", token)
-                      localStorage.setItem("currentUser", JSON.stringify(user))
-                      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
-
-                      dispatch(signInSuccess({ user }))
-                      dispatch(login(user))
-
-                      setTimeout(() => {
-                        navigate("/home")
-                      }, 1000)
-                    } else {
-                      const parsedError = parseApiError(response)
-                      toast.error(parsedError)
-                      dispatch(signInFailure(parsedError))
-                    }
-                  } catch (error) {
-                    const parsedError = parseApiError(error)
-                    toast.error(parsedError)
-                    dispatch(signInFailure(parsedError))
-                  }
-                }}
-                onError={() => {
-                  toast.error("Google sign-in failed.")
-                }}
-              />
+              <GoogleSignInButton/>
             </div>
           </div>
           <div className="mt-6 text-center text-sm">
@@ -412,127 +200,6 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Forgot Password Modal */}
-      {showForgotModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Forgot Password</h3>
-              <button onClick={closeForgotModal} className="text-gray-400 hover:text-gray-600">
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-600 mb-4">
-              Enter your username or email address and we'll send you an OTP to reset your password.
-            </p>
-
-            <form onSubmit={handleForgotPassword}>
-              <div className="mb-4">
-                <Label htmlFor="forgotIdentifier" className="block text-sm font-medium text-gray-700 mb-2">
-                  Username or Email
-                </Label>
-                <Input
-                  id="forgotIdentifier"
-                  type="text"
-                  value={forgotIdentifier}
-                  onChange={(e) => setForgotIdentifier(e.target.value)}
-                  placeholder="Enter your username or email"
-                  className="w-full"
-                  disabled={isRequestingOtp}
-                  required
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={closeForgotModal}
-                  className="flex-1"
-                  disabled={isRequestingOtp}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="flex-1" disabled={isRequestingOtp}>
-                  {isRequestingOtp ? "Sending..." : "Send OTP"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* OTP Verification Modal */}
-      {showOtpModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Enter OTP</h3>
-              <button onClick={closeOtpModal} className="text-gray-400 hover:text-gray-600">
-                <FiX className="h-5 w-5" />
-              </button>
-            </div>
-
-            <p className="text-sm text-gray-600 mb-4">
-              We've sent a 6-digit OTP to your email. Enter it below to verify your identity.
-            </p>
-
-            <form onSubmit={handleOtpVerification}>
-              <div className="mb-4">
-                <Label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
-                  OTP Code
-                </Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  value={otp}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "").slice(0, 6)
-                    setOtp(value)
-                  }}
-                  placeholder="000000"
-                  className="w-full text-center text-2xl tracking-widest"
-                  disabled={isVerifyingOtp}
-                  maxLength={6}
-                  required
-                />
-              </div>
-
-              <div className="mb-4 text-center">
-                {canResendOtp ? (
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    className="text-sm text-primary hover:text-primary-dark font-medium"
-                    disabled={isRequestingOtp}
-                  >
-                    {isRequestingOtp ? "Resending..." : "Resend OTP"}
-                  </button>
-                ) : (
-                  <p className="text-sm text-gray-500">Resend OTP in {resendTimer} seconds</p>
-                )}
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={closeOtpModal}
-                  className="flex-1"
-                  disabled={isVerifyingOtp}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="flex-1" disabled={isVerifyingOtp || otp.length !== 6}>
-                  {isVerifyingOtp ? "Verifying..." : "Verify OTP"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </>
   )
 }

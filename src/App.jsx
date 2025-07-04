@@ -14,6 +14,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import SettingsPage from "@/pages/SettingsPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import Footer from "@/components/Reusables/Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUserFromLocalStorage } from "@/utils/CheckAuthState";
@@ -81,6 +82,14 @@ function App() {
           element={
             <PublicRoute>
               <RegisterPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/forget_password"
+          element={
+            <PublicRoute>
+              <ResetPasswordPage />
             </PublicRoute>
           }
         />

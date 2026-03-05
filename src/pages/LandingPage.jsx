@@ -1,116 +1,187 @@
 "use client"
 
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { ChevronDown, ArrowRight, Sun, Moon, FileText, Shield, Zap, Users, Sparkles } from "lucide-react"
 import { ROUTES } from "@/constants/routeConfig"
 import { PRICING_TIERS } from "@/utils/mockData"
-import { CheckCircle, ArrowRight, Shield, Zap, BarChart3 } from "lucide-react"
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const [isDark, setIsDark] = useState(true)
+  const [scrollY, setScrollY] = useState(0)
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false)
+
+  useEffect(() => {
+    setIsAuthenticatedUser(!!localStorage.getItem("authToken"))
+    document.documentElement.classList.add("dark")
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark)
+    if (isDark) {
+      document.documentElement.classList.remove("dark")
+    } else {
+      document.documentElement.classList.add("dark")
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/30">
         <div className="container flex items-center justify-between h-16">
-          <div className="text-2xl font-bold text-primary">DocuVault</div>
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            DocuVault
+          </Link>
+
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+              Features
+            </a>
+            <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+              Pricing
+            </a>
+            <a href="#" className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+              Docs
+            </a>
+          </div>
+
+          {/* CTA + Dark Mode Toggle */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate(ROUTES.PRICING)}
-              className="text-foreground hover:text-primary transition-colors"
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg hover:bg-secondary/50 transition-colors duration-200"
+              aria-label="Toggle dark mode"
             >
-              Pricing
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <button
-              onClick={() => navigate(ROUTES.LOGIN)}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => navigate(ROUTES.REGISTER)}
-              className="btn btn-primary"
-            >
-              Get Started
-            </button>
+            {!isAuthenticatedUser ? (
+              <>
+                <Link to={ROUTES.LOGIN} className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium hidden sm:block">
+                  Sign In
+                </Link>
+                <Link to={ROUTES.REGISTER}>
+                  <button className="px-6 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium text-sm">
+                    Get Started
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <Link to={ROUTES.DASHBOARD}>
+                <button className="px-6 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium text-sm">
+                  Dashboard
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-28">
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-              <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-              <span className="text-sm text-primary font-medium">Now Available: Professional Plans</span>
-            </div>
-
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
-              Secure Document Management for Modern Teams
-            </h1>
-
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Store, organize, and share your documents with enterprise-grade security. Trusted by thousands of professionals worldwide.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <button
-                onClick={() => navigate(ROUTES.REGISTER)}
-                className="btn btn-primary px-8 py-3 text-lg font-semibold flex items-center gap-2"
-              >
-                Start Free Trial <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => navigate(ROUTES.PRICING)}
-                className="btn btn-secondary px-8 py-3 text-lg font-semibold"
-              >
-                View Pricing
-              </button>
-            </div>
-
-            <div className="pt-8 text-sm text-muted-foreground">
-              No credit card required • 14-day free trial • Cancel anytime
-            </div>
-          </div>
+      {/* Hero Section with Animated Grid */}
+      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        {/* Animated Grid Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-accent/10" />
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `
+                linear-gradient(0deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(0, 255, 255, 0.05) 25%, rgba(0, 255, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 255, 0.05) 75%, rgba(0, 255, 255, 0.05) 76%, transparent 77%, transparent)
+              `,
+              backgroundSize: "50px 50px",
+              animation: "grid-slide 30s linear infinite",
+              transform: `translateY(${scrollY * 0.5}px)`,
+            }}
+          />
         </div>
 
-        {/* Background Gradient */}
-        <div className="absolute inset-0 -z-10 h-full w-full bg-gradient-to-br from-primary/5 via-transparent to-accent/5"></div>
+        {/* Floating Orbs */}
+        <div className="absolute top-20 right-10 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
+
+        {/* Content */}
+        <div className="relative z-10 container text-center space-y-8 px-4">
+          {/* Badge */}
+          <div className="inline-block fade-in" style={{ animationDelay: '0ms' }}>
+            <div className="px-4 py-2 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm">
+              <span className="text-sm font-medium text-primary flex items-center gap-2">
+                <Sparkles size={16} />
+                Welcome to the future of document management
+              </span>
+            </div>
+          </div>
+
+          {/* Main Headline */}
+          <div className="space-y-4 fade-in" style={{ animationDelay: '100ms' }}>
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              Secure. <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">Smart.</span> Simple.
+            </h1>
+            <p className="text-xl md:text-2xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
+              Experience the next generation of document management. Upload, share, and collaborate with unmatched security.
+            </p>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 fade-in" style={{ animationDelay: '200ms' }}>
+            <Link to={isAuthenticatedUser ? ROUTES.DASHBOARD : ROUTES.REGISTER}>
+              <button className="px-8 py-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-semibold flex items-center gap-2 group hover:shadow-lg hover:shadow-primary/30">
+                Get Started Free
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </Link>
+            <Link to={ROUTES.PRICING}>
+              <button className="px-8 py-4 rounded-lg border border-primary/50 bg-transparent hover:bg-primary/10 transition-all font-semibold text-primary">
+                View Pricing
+              </button>
+            </Link>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="pt-12 fade-in" style={{ animationDelay: '300ms' }}>
+            <a href="#features" className="inline-block">
+              <ChevronDown size={28} className="mx-auto text-primary/50 hover:text-primary transition-colors animate-bounce" />
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Features Section */}
-      <section className="section bg-secondary/30 border-y border-border">
-        <div className="container">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl font-bold text-foreground">Powerful Features</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Everything you need for secure document management</p>
+      <section id="features" className="relative py-24 bg-gradient-to-b from-transparent via-primary/5 to-transparent border-y border-border/30">
+        <div className="container space-y-16">
+          {/* Section Header */}
+          <div className="text-center space-y-4 scroll-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold">Why choose DocuVault?</h2>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Everything you need to manage documents securely and efficiently
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-4 gap-6">
             {[
-              {
-                icon: Shield,
-                title: "Enterprise Security",
-                description: "End-to-end encryption and compliance with industry standards including ISO 27001 and GDPR."
-              },
-              {
-                icon: Zap,
-                title: "Lightning Fast",
-                description: "Search through thousands of documents in milliseconds with our advanced indexing system."
-              },
-              {
-                icon: BarChart3,
-                title: "Advanced Analytics",
-                description: "Detailed insights into your document usage, access patterns, and team activity."
-              },
-            ].map((feature, idx) => (
-              <div key={idx} className="card space-y-4 hover:shadow-lg transition-shadow">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
+              { icon: FileText, title: "Smart Upload", desc: "Instantly upload and organize documents with AI-powered tagging" },
+              { icon: Shield, title: "Enterprise Security", desc: "End-to-end encryption for all your files and data" },
+              { icon: Zap, title: "Lightning Fast", desc: "Access your documents in milliseconds with advanced search" },
+              { icon: Users, title: "Easy Sharing", desc: "Collaborate seamlessly with granular permission controls" },
+            ].map((feature, i) => (
+              <div
+                key={i}
+                className="scroll-reveal p-6 rounded-xl border border-border/50 bg-card/30 backdrop-blur hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:bg-card/50"
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <feature.icon size={32} className="text-primary mb-4" />
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-foreground/70 text-sm">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -118,66 +189,54 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl font-bold text-foreground">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Choose the perfect plan for your needs</p>
+      <section id="pricing" className="relative py-24">
+        <div className="container space-y-16">
+          {/* Section Header */}
+          <div className="text-center space-y-4 scroll-reveal">
+            <h2 className="text-4xl md:text-5xl font-bold">Simple, Transparent Pricing</h2>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Choose the plan that fits your needs
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {PRICING_TIERS.map((tier) => (
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {PRICING_TIERS.map((tier, i) => (
               <div
-                key={tier.id}
-                className={`card relative flex flex-col ${
-                  tier.highlighted
-                    ? "ring-2 ring-primary scale-105 md:scale-100"
-                    : ""
+                key={i}
+                className={`scroll-reveal rounded-xl border transition-all duration-300 p-8 ${
+                  i === 1
+                    ? "border-primary/50 bg-gradient-to-br from-primary/10 to-accent/5 shadow-lg shadow-primary/20 md:scale-105"
+                    : "border-border/50 bg-card/30 backdrop-blur hover:border-primary/30 hover:bg-card/50"
                 }`}
+                style={{ transitionDelay: `${i * 100}ms` }}
               >
-                {tier.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="badge badge-primary">{tier.badge}</span>
-                  </div>
-                )}
-
-                <div className="flex-1 space-y-6">
-                  <div>
-                    <h3 className="text-2xl font-bold text-foreground">{tier.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-2">{tier.description}</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    {tier.customPrice ? (
-                      <div className="text-3xl font-bold text-foreground">Custom</div>
-                    ) : (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-foreground">${tier.price}</span>
-                        <span className="text-muted-foreground">{tier.billingPeriod}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <ul className="space-y-3">
-                    {tier.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                        <span className="text-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
+                <p className="text-foreground/70 mb-6">{tier.description}</p>
+                <div className="mb-8">
+                  <span className="text-5xl font-bold">${tier.price}</span>
+                  <span className="text-foreground/70">/month</span>
                 </div>
-
                 <button
                   onClick={() => navigate(ROUTES.REGISTER)}
-                  className={`w-full mt-8 py-3 rounded-lg font-semibold transition-colors ${
-                    tier.highlighted
-                      ? "btn btn-primary"
-                      : "btn btn-secondary"
+                  className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                    i === 1
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30"
+                      : "border border-primary/30 text-primary hover:bg-primary/10"
                   }`}
                 >
-                  {tier.buttonText}
+                  Get Started
                 </button>
+                <div className="mt-8 space-y-4">
+                  {tier.features.slice(0, 3).map((feature, j) => (
+                    <div key={j} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
+                      </div>
+                      <span className="text-foreground/80 text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -185,56 +244,81 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section bg-primary/5 border-t border-border">
-        <div className="container text-center space-y-8">
-          <div className="space-y-4">
-            <h2 className="text-4xl font-bold text-foreground">Ready to get started?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Join thousands of teams managing their documents securely with DocuVault.</p>
-          </div>
-          <button
-            onClick={() => navigate(ROUTES.REGISTER)}
-            className="btn btn-primary px-8 py-3 text-lg font-semibold inline-flex items-center gap-2"
-          >
-            Start Your Free Trial <ArrowRight className="w-5 h-5" />
-          </button>
+      <section className="relative py-24 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 border-t border-b border-border/30">
+        <div className="container text-center space-y-8 scroll-reveal">
+          <h2 className="text-4xl md:text-5xl font-bold">
+            Ready to secure your documents?
+          </h2>
+          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            Join thousands of users trusting DocuVault with their most important files
+          </p>
+          <Link to={isAuthenticatedUser ? ROUTES.DASHBOARD : ROUTES.REGISTER}>
+            <button className="px-8 py-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-semibold text-lg inline-flex items-center gap-2 hover:shadow-lg hover:shadow-primary/30">
+              Start Free Today
+              <ArrowRight size={20} />
+            </button>
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-secondary/30 py-12">
+      <footer className="border-t border-border/30 py-12 bg-background/50">
         <div className="container">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="text-xl font-bold text-primary mb-4">DocuVault</div>
-              <p className="text-sm text-muted-foreground">Secure document management for everyone.</p>
+            <div className="space-y-4">
+              <h3 className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">DocuVault</h3>
+              <p className="text-foreground/70 text-sm">Secure document management for modern teams</p>
             </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => navigate(ROUTES.PRICING)} className="hover:text-primary">Pricing</button></li>
-                <li><a href="#features" className="hover:text-primary">Features</a></li>
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Product</h4>
+              <ul className="space-y-2 text-foreground/70 text-sm">
+                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
+                <li><a href={ROUTES.PRICING} className="hover:text-foreground transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Security</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#privacy" className="hover:text-primary">Privacy</a></li>
-                <li><a href="#terms" className="hover:text-primary">Terms</a></li>
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Company</h4>
+              <ul className="space-y-2 text-foreground/70 text-sm">
+                <li><a href="#" className="hover:text-foreground transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#help" className="hover:text-primary">Help Center</a></li>
-                <li><a href="#contact" className="hover:text-primary">Contact Us</a></li>
+            <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Legal</h4>
+              <ul className="space-y-2 text-foreground/70 text-sm">
+                <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Terms</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Status</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
+          <div className="border-t border-border/30 pt-8 text-center text-foreground/70 text-sm">
             <p>&copy; 2024 DocuVault. All rights reserved.</p>
           </div>
         </div>
       </footer>
+
+      {/* Scroll Reveal Intersection Observer */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            if (typeof window !== 'undefined') {
+              const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+              const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                  }
+                });
+              }, observerOptions);
+              document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+            }
+          `,
+        }}
+      />
     </div>
   )
 }
+

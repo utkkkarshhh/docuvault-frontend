@@ -37,99 +37,99 @@ html {
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Design Tokens - Modern SaaS Color System ===== */
+/* ===== Design Tokens - Ultra Modern SaaS (Dark First) ===== */
 @layer base {
   :root {
-    /* Light Mode - Primary: Blue */
-    --background: 0 0% 100%;
-    --foreground: 15 30% 10%;
+    /* Light Mode */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 15 30% 10%;
+    --card-foreground: 0 0% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 15 30% 10%;
+    --popover-foreground: 0 0% 8%;
     
-    /* Primary Brand Color - Modern Blue */
-    --primary: 217 100% 48%;
+    /* Primary - Bright Cyan */
+    --primary: 190 100% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Light Gray */
-    --secondary: 210 16% 96%;
-    --secondary-foreground: 15 30% 10%;
+    /* Secondary - Soft Gray */
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 20%;
     
     /* Muted - Medium Gray */
-    --muted: 210 14% 83%;
-    --muted-foreground: 215 13% 34%;
+    --muted: 0 0% 80%;
+    --muted-foreground: 0 0% 45%;
     
-    /* Accent - Vibrant Purple */
-    --accent: 271 100% 55%;
+    /* Accent - Vivid Magenta */
+    --accent: 280 100% 50%;
     --accent-foreground: 0 0% 100%;
     
-    /* Error/Destructive - Red */
-    --destructive: 0 84% 60%;
+    /* Error/Destructive */
+    --destructive: 0 100% 55%;
     --destructive-foreground: 0 0% 100%;
     
     /* Border and Input */
-    --border: 210 14% 89%;
-    --input: 210 16% 96%;
+    --border: 0 0% 85%;
+    --input: 0 0% 95%;
     
     /* Ring/Focus */
-    --ring: 217 100% 48%;
+    --ring: 190 100% 50%;
     
     /* Radius */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     
     /* Additional SaaS Tokens */
-    --success: 142 71% 45%;
+    --success: 120 100% 40%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 40 100% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 217 100% 48%;
+    --info: 190 100% 50%;
     --info-foreground: 0 0% 100%;
   }
 
   .dark {
-    /* Dark Mode */
-    --background: 217 33% 17%;
-    --foreground: 210 40% 98%;
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
-    --popover: 217 33% 17%;
-    --popover-foreground: 210 40% 98%;
+    /* Dark Mode (Default) */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
     
-    /* Primary Brand Color - Lighter for dark mode */
-    --primary: 212 97% 60%;
-    --primary-foreground: 15 30% 10%;
+    /* Primary - Bright Cyan */
+    --primary: 190 100% 55%;
+    --primary-foreground: 0 0% 8%;
     
     /* Secondary - Dark Gray */
-    --secondary: 217 25% 25%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 96%;
     
     /* Muted - Darker Gray */
-    --muted: 217 20% 40%;
-    --muted-foreground: 210 15% 80%;
+    --muted: 0 0% 25%;
+    --muted-foreground: 0 0% 70%;
     
-    /* Accent */
-    --accent: 271 100% 65%;
-    --accent-foreground: 217 33% 17%;
+    /* Accent - Bright Magenta */
+    --accent: 280 100% 55%;
+    --accent-foreground: 0 0% 8%;
     
     /* Error/Destructive */
-    --destructive: 0 74% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 0 0% 96%;
     
     /* Border and Input */
-    --border: 217 25% 25%;
-    --input: 217 25% 25%;
+    --border: 0 0% 18%;
+    --input: 0 0% 12%;
     
     /* Ring/Focus */
-    --ring: 212 97% 60%;
+    --ring: 190 100% 55%;
     
     /* Additional SaaS Tokens */
-    --success: 142 76% 55%;
-    --success-foreground: 217 33% 17%;
-    --warning: 38 92% 60%;
-    --warning-foreground: 217 33% 17%;
-    --info: 212 97% 60%;
-    --info-foreground: 217 33% 17%;
+    --success: 120 100% 45%;
+    --success-foreground: 0 0% 8%;
+    --warning: 40 100% 55%;
+    --warning-foreground: 0 0% 8%;
+    --info: 190 100% 55%;
+    --info-foreground: 0 0% 8%;
   }
 }
 
@@ -298,18 +298,71 @@ html {
   }
 }
 
+/* ===== Custom Animations ===== */
+@keyframes grid-slide {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50px);
+  }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
 /* ===== Utility Animations ===== */
 @layer utilities {
   .fade-in {
-    @apply animate-fadeIn;
+    animation: float-up 0.6s ease-out;
   }
 
   .slide-in-down {
-    @apply animate-slideInDown;
+    animation: float-up 0.6s ease-out reverse;
   }
 
   .slide-in-up {
-    @apply animate-slideInUp;
+    animation: float-up 0.6s ease-out;
+  }
+
+  .grid-slide {
+    animation: grid-slide 20s linear infinite;
+  }
+
+  .glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
   }
 
   .text-ellipsis-2 {
@@ -324,6 +377,32 @@ html {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Modern glass morphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Dark mode glass */
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Scroll reveal */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out 0.1s, transform 0.6s ease-out 0.1s;
+  }
+
+  .scroll-reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

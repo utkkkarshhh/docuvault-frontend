@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
-import Avatar from "@/components/custom/Buttons/AvatarButton/Avatar";
+import { useState, useEffect } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Menu, X, LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useSelector, useDispatch } from "react-redux"
+import { logout } from "@/redux/auth/authSlice"
+import { clearState } from "@/redux/user/userSlice"
+import Avatar from "@/components/custom/Buttons/AvatarButton/Avatar"
+import { ROUTES, NAVIGATION_ITEMS } from "@/constants/routeConfig"
+import axios from "axios"
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,7 +38,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <Link to={ROUTES.HOME} className="flex-shrink-0 flex items-center">
               <span className="text-xl font-bold text-primary">DocuVault</span>
             </Link>
           </div>
@@ -50,7 +54,7 @@ export default function Navbar() {
                 </button>
               ))}
             {!isLoggedIn ? (
-              <Link to="/login">
+              <Link to={ROUTES.LOGIN}>
                 <Button className="ml-4">Login</Button>
               </Link>
             ) : (
@@ -88,7 +92,7 @@ export default function Navbar() {
           } transition-transform duration-300 ease-in-out`}
         >
           <div className="flex justify-between items-center h-16 px-4 sm:px-6 border-b">
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <Link to={ROUTES.HOME} className="flex-shrink-0 flex items-center">
               <span className="text-xl font-bold text-primary">DocuVault</span>
             </Link>
             <button

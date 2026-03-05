@@ -1,28 +1,30 @@
-import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react"
+import axios from "axios"
+import toast from "react-hot-toast"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Upload, Loader2, FileText } from "lucide-react";
-import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection";
-import { apiEndpoints, baseUrl } from "@/constants/constants";
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Upload, Loader2, FileText } from "lucide-react"
+import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection"
+import { apiEndpoints, baseUrl } from "@/constants/constants"
+import { ROUTES } from "@/constants/routeConfig"
 
 export default function ResponsiveHomepage() {
   const [fileName, setFileName] = useState("");

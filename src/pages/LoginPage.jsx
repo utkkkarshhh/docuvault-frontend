@@ -10,9 +10,11 @@ import { Label } from "@/components/ui/label"
 import { useDispatch, useSelector } from "react-redux"
 import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlice"
 import { login } from "@/redux/auth/authSlice"
-import { FiLock, FiMail, FiEye, FiEyeOff, FiX } from "react-icons/fi"
+import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import { parseApiError } from "@/utils/parseApiError"
 import { loginUser } from "@/actions/authActions"
+import { ROUTES } from "@/constants/routeConfig"
+import { responseMessages } from "@/constants/messages"
 import GoogleSignInButton from "@/components/oauth/GoogleSignInButton"
 
 const LoginPage = () => {
@@ -85,122 +87,130 @@ const LoginPage = () => {
   }
 
   return (
-    <>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Welcome back</h2>
-            <p className="mt-2 text-center text-sm text-gray-600">Sign in to your account</p>
-          </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm -space-y-px">
-              <div>
-                <Label htmlFor="identifier" className="sr-only">
-                  Username or Email
-                </Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiMail className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    autoComplete="username"
-                    required
-                    className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                    placeholder="Username or email address"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="password" className="sr-only">
-                  Password
-                </Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FiLock className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                      className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                    >
-                      {showPassword ? (
-                        <FiEyeOff className="h-5 w-5" aria-hidden="true" />
-                      ) : (
-                        <FiEye className="h-5 w-5" aria-hidden="true" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background to-secondary/20 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Header with Back Link */}
+      <div className="mb-8">
+        <button
+          onClick={() => navigate(ROUTES.HOME)}
+          className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+        >
+          ← Back to Home
+        </button>
+      </div>
 
-            <div className="flex items-center justify-end">
-              <div className="text-sm">
-                <button
-                  type="button"
-                  onClick={() => handleForgotPassword()}
-                  className="font-medium text-primary hover:text-primary-dark"
-                >
-                  Forgot your password?
-                </button>
-              </div>
-            </div>
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-bold text-foreground">Welcome back</h2>
+          <p className="text-muted-foreground">Sign in to your DocuVault account</p>
+        </div>
 
-            <div>
-              <Button
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                disabled={loading}
-              >
-                {loading ? "Signing in..." : "Sign in"}
-              </Button>
-            </div>
-          </form>
-
-          <div className="mt-6">
+        {/* Form */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Email/Username Field */}
+          <div className="space-y-2">
+            <Label htmlFor="identifier" className="text-foreground font-medium">
+              Email or Username
+            </Label>
             <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-muted-foreground" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <GoogleSignInButton/>
+              <Input
+                id="identifier"
+                name="identifier"
+                type="text"
+                autoComplete="username"
+                required
+                className="pl-10 py-3 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Enter your email or username"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                disabled={loading}
+              />
             </div>
           </div>
-          <div className="mt-6 text-center text-sm">
-            <p className="text-gray-600">
-              Don't have an account?{" "}
-              <Link to="/register" className="font-medium text-primary hover:text-primary-dark">
-                Sign up
-              </Link>
-            </p>
+
+          {/* Password Field */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-foreground font-medium">
+                Password
+              </Label>
+              <button
+                type="button"
+                onClick={() => handleForgotPassword()}
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
+              >
+                Forgot password?
+              </button>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                className="pl-10 pr-10 py-3 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-full btn btn-primary py-3 text-base font-semibold"
+            disabled={loading}
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </Button>
+        </form>
+
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-background text-muted-foreground">Or continue with</span>
           </div>
         </div>
+
+        {/* Google Sign In */}
+        <div className="mt-4">
+          <GoogleSignInButton />
+        </div>
+
+        {/* Sign Up Link */}
+        <div className="text-center text-sm">
+          <p className="text-muted-foreground">
+            Don't have an account?{" "}
+            <Link to={ROUTES.REGISTER} className="font-medium text-primary hover:text-primary/80 transition-colors">
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 

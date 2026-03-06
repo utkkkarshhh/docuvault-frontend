@@ -37,55 +37,101 @@ html {
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Design Tokens - Ultra Modern SaaS (Dark First) ===== */
+/* ===== Design Tokens - Reddit-like Minimal Design ===== */
 @layer base {
   :root {
     /* Light Mode */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 8%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 8%;
+    --popover-foreground: 0 0% 10%;
     
-    /* Primary - Bright Cyan */
-    --primary: 190 100% 50%;
+    /* Primary - Orange/Red (Reddit-like) */
+    --primary: 17 100% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Soft Gray */
-    --secondary: 0 0% 94%;
-    --secondary-foreground: 0 0% 20%;
+    /* Secondary - Light Gray */
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 30%;
     
     /* Muted - Medium Gray */
-    --muted: 0 0% 80%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 75%;
+    --muted-foreground: 0 0% 55%;
     
-    /* Accent - Vivid Magenta */
-    --accent: 280 100% 50%;
+    /* Accent - Blue */
+    --accent: 211 100% 50%;
     --accent-foreground: 0 0% 100%;
     
     /* Error/Destructive */
-    --destructive: 0 100% 55%;
+    --destructive: 0 100% 50%;
     --destructive-foreground: 0 0% 100%;
     
     /* Border and Input */
-    --border: 0 0% 85%;
-    --input: 0 0% 95%;
+    --border: 0 0% 90%;
+    --input: 0 0% 98%;
     
     /* Ring/Focus */
-    --ring: 190 100% 50%;
+    --ring: 17 100% 50%;
     
     /* Radius */
-    --radius: 0.75rem;
+    --radius: 0.375rem;
     
-    /* Additional SaaS Tokens */
+    /* Additional Tokens */
     --success: 120 100% 40%;
     --success-foreground: 0 0% 100%;
     --warning: 40 100% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 190 100% 50%;
+    --info: 211 100% 50%;
     --info-foreground: 0 0% 100%;
   }
+
+  .dark {
+    /* Dark Mode (Default) */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 95%;
+    
+    /* Primary - Orange/Red */
+    --primary: 17 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Dark Gray */
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 95%;
+    
+    /* Muted - Medium Gray */
+    --muted: 0 0% 35%;
+    --muted-foreground: 0 0% 75%;
+    
+    /* Accent - Blue */
+    --accent: 211 100% 55%;
+    --accent-foreground: 0 0% 11%;
+    
+    /* Error/Destructive */
+    --destructive: 0 100% 55%;
+    --destructive-foreground: 0 0% 95%;
+    
+    /* Border and Input */
+    --border: 0 0% 20%;
+    --input: 0 0% 14%;
+    
+    /* Ring/Focus */
+    --ring: 17 100% 55%;
+    
+    /* Additional Tokens */
+    --success: 120 100% 45%;
+    --success-foreground: 0 0% 11%;
+    --warning: 40 100% 55%;
+    --warning-foreground: 0 0% 11%;
+    --info: 211 100% 55%;
+    --info-foreground: 0 0% 11%;
+  }
+}
 
   .dark {
     /* Dark Mode (Default) */

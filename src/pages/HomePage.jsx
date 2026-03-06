@@ -146,7 +146,7 @@ export default function HomePage() {
                   <span className="font-medium">Feed</span>
                 </div>
               </Link>
-              <Link to={ROUTES.DOWNLOAD_HISTORY}>
+              <Link to={ROUTES.DOWNLOAD_HISTORY} className="block">
                 <div className="flex items-center gap-4 px-4 py-3 border-b border-border hover:bg-secondary text-foreground cursor-pointer transition-colors">
                   <Clock size={20} className="text-primary" />
                   <span className="font-medium">Downloads</span>

@@ -133,52 +133,6 @@ html {
   }
 }
 
-  .dark {
-    /* Dark Mode (Default) */
-    --background: 0 0% 5%;
-    --foreground: 0 0% 96%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 96%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 96%;
-    
-    /* Primary - Bright Cyan */
-    --primary: 190 100% 55%;
-    --primary-foreground: 0 0% 8%;
-    
-    /* Secondary - Dark Gray */
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 96%;
-    
-    /* Muted - Darker Gray */
-    --muted: 0 0% 25%;
-    --muted-foreground: 0 0% 70%;
-    
-    /* Accent - Bright Magenta */
-    --accent: 280 100% 55%;
-    --accent-foreground: 0 0% 8%;
-    
-    /* Error/Destructive */
-    --destructive: 0 100% 60%;
-    --destructive-foreground: 0 0% 96%;
-    
-    /* Border and Input */
-    --border: 0 0% 18%;
-    --input: 0 0% 12%;
-    
-    /* Ring/Focus */
-    --ring: 190 100% 55%;
-    
-    /* Additional SaaS Tokens */
-    --success: 120 100% 45%;
-    --success-foreground: 0 0% 8%;
-    --warning: 40 100% 55%;
-    --warning-foreground: 0 0% 8%;
-    --info: 190 100% 55%;
-    --info-foreground: 0 0% 8%;
-  }
-}
-
 @layer base {
   * {
     @apply border-border;

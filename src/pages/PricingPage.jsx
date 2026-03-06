@@ -1,6 +1,6 @@
 "use client"
 
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { PRICING_TIERS } from "@/utils/mockData"
 import { ROUTES } from "@/constants/routeConfig"
 import { CheckCircle, ArrowRight } from "lucide-react"
@@ -14,18 +14,18 @@ export default function PricingPage() {
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
         <div className="container flex items-center justify-between h-16">
-          <button
-            onClick={() => navigate(ROUTES.HOME)}
+          <Link
+            to={ROUTES.HOME}
             className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity"
           >
             DocuVault
-          </button>
-          <button
-            onClick={() => navigate(isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN)}
+          </Link>
+          <Link
+            to={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.LOGIN}
             className="text-foreground hover:text-primary transition-colors"
           >
             {isAuthenticated ? "Dashboard" : "Sign In"}
-          </button>
+          </Link>
         </div>
       </div>
 

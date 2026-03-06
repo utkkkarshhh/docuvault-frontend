@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Upload, Loader2, FileText } from "lucide-react"
+import { Upload, Loader2, FileText, Zap, Clock, Lock } from "lucide-react"
 import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection"
 import { apiEndpoints, baseUrl } from "@/constants/constants"
 import { ROUTES } from "@/constants/routeConfig"
@@ -138,38 +138,84 @@ export default function ResponsiveHomepage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h1 className="text-3xl font-bold mb-4 text-center md:text-left text-gray-800">
-            Welcome back, {currentUser?.username}!
-          </h1>
-          <p className="text-gray-600 text-center md:text-left">
-            Manage your documents and upload new files with ease.
-          </p>
+    <div className="min-h-screen bg-background text-foreground pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="mb-12 space-y-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Zap size={24} className="text-primary-foreground" />
+              </div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Dashboard
+              </h1>
+            </div>
+            <p className="text-lg text-foreground/70 max-w-2xl">
+              Welcome back, <span className="text-primary font-semibold">{currentUser?.username}</span>. Manage your documents and upload new files with ease.
+            </p>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-lg border border-border/50 bg-card/30 backdrop-blur hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <Clock size={20} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-foreground/70 text-sm">Recent Uploads</p>
+                  <p className="text-2xl font-bold">5 files</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 rounded-lg border border-border/50 bg-card/30 backdrop-blur hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-lg bg-accent/10">
+                  <Lock size={20} className="text-accent" />
+                </div>
+                <div>
+                  <p className="text-foreground/70 text-sm">Storage Used</p>
+                  <p className="text-2xl font-bold">2.4 GB</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 rounded-lg border border-border/50 bg-card/30 backdrop-blur hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <FileText size={20} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-foreground/70 text-sm">Total Files</p>
+                  <p className="text-2xl font-bold">24 files</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 mb-12">
-          <Card className="w-full bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl text-gray-800">
-                Upload Document
-              </CardTitle>
-              <CardDescription>
-                Drag and drop your file or click to browse
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+        {/* Upload Section */}
+        <div className="grid gap-8 lg:grid-cols-5 mb-12">
+          {/* Upload Area */}
+          <div className="lg:col-span-2">
+            <div className="p-8 rounded-xl border border-border/50 bg-card/30 backdrop-blur hover:border-primary/50 transition-all duration-300">
+              <h2 className="text-2xl font-bold mb-2">Upload Document</h2>
+              <p className="text-foreground/70 mb-6">Drag and drop your file or click to browse</p>
+              
               <div
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors bg-gray-50"
+                className="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all"
                 onClick={() => document.getElementById("fileInput").click()}
               >
-                <Upload className="mx-auto h-16 w-16 text-gray-400" />
-                <p className="mt-4 text-sm text-gray-600">
-                  Upload your file or drag and drop it here
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 rounded-full bg-primary/10">
+                    <Upload size={32} className="text-primary" />
+                  </div>
+                </div>
+                <p className="text-foreground font-medium mb-2">
+                  Drag files here or click to browse
                 </p>
-                <p className="mt-2 text-xs text-gray-500">
-                  Supported formats: .doc, .docx, .pdf, .png, .jpg, .jpeg
+                <p className="text-foreground/60 text-sm">
+                  Supports: .doc, .docx, .pdf, .png, .jpg, .jpeg
                 </p>
                 <input
                   type="file"
@@ -180,76 +226,80 @@ export default function ResponsiveHomepage() {
                   required
                 />
               </div>
+
               {selectedFile && (
-                <div className="mt-4 p-3 bg-green-100 rounded-md flex items-center">
-                  <FileText className="h-5 w-5 text-green-600 mr-2" />
-                  <p className="text-sm text-green-700">
-                    File selected: {selectedFile.name}
-                  </p>
+                <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/30 flex items-start gap-3">
+                  <FileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground">
+                      File selected
+                    </p>
+                    <p className="text-xs text-foreground/70 truncate">
+                      {selectedFile.name}
+                    </p>
+                  </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className="w-full bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl text-gray-800">
-                File Information
-              </CardTitle>
-              <CardDescription>
-                Provide details about your document
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+          {/* File Information Form */}
+          <div className="lg:col-span-3">
+            <div className="p-8 rounded-xl border border-border/50 bg-card/30 backdrop-blur">
+              <h2 className="text-2xl font-bold mb-6">File Information</h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700">
-                    Document Name *
+                  <Label htmlFor="name" className="text-foreground font-medium">
+                    Document Name <span className="text-primary">*</span>
                   </Label>
                   <Input
                     id="name"
-                    placeholder="Enter file name"
+                    placeholder="Enter a meaningful name for your document"
                     value={fileName}
                     onChange={(e) => setFileName(e.target.value)}
                     required
-                    className="border-gray-300 focus:border-blue-400 focus:ring-blue-400"
+                    className="bg-input border-border/50 text-foreground placeholder:text-foreground/50 focus:border-primary/50 focus:ring-primary/30"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="text-gray-700">
+                  <Label htmlFor="description" className="text-foreground font-medium">
                     Description
                   </Label>
                   <Textarea
                     id="description"
-                    placeholder="Enter file description"
-                    className="min-h-[100px] border-gray-300 focus:border-blue-400 focus:ring-blue-400"
+                    placeholder="Add details about your document (optional)"
+                    className="min-h-[100px] bg-input border-border/50 text-foreground placeholder:text-foreground/50 focus:border-primary/50 focus:ring-primary/30 resize-none"
                     value={fileDescription}
                     onChange={(e) => setFileDescription(e.target.value)}
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="category" className="text-gray-700">
-                    File Category *
+                  <Label htmlFor="category" className="text-foreground font-medium">
+                    File Category <span className="text-primary">*</span>
                   </Label>
                   <Select
                     value={fileCategory}
                     onValueChange={(value) => setFileCategory(value)}
                   >
-                    <SelectTrigger className="w-full border-gray-300 focus:border-blue-400 focus:ring-blue-400">
-                      <SelectValue placeholder="Select category" />
+                    <SelectTrigger className="bg-input border-border/50 text-foreground focus:border-primary/50 focus:ring-primary/30">
+                      <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-card border-border/50">
                       {documentTypes.map((type) => (
-                        <SelectItem key={type.id} value={String(type.id)}>
+                        <SelectItem key={type.id} value={String(type.id)} className="text-foreground">
                           {type.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-3 font-semibold text-base transition-all mt-2"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -258,18 +308,26 @@ export default function ResponsiveHomepage() {
                       Uploading...
                     </>
                   ) : (
-                    "Upload Document"
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Document
+                    </>
                   )}
                 </Button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
-        <DocumentsSection
-          userId={currentUser?.user_id}
-          baseUrl={baseUrl}
-          refetchTrigger={documentsRefetchTrigger}
-        />
+
+        {/* Documents Section */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold mb-8">Your Documents</h2>
+          <DocumentsSection
+            userId={currentUser?.user_id}
+            baseUrl={baseUrl}
+            refetchTrigger={documentsRefetchTrigger}
+          />
+        </div>
       </div>
     </div>
   );

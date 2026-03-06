@@ -3,7 +3,7 @@ import axios from "axios"
 import toast from "react-hot-toast"
 import { useSelector } from "react-redux"
 import { useNavigate, Link } from "react-router-dom"
-import { Upload, Loader2, FileText, Home, Zap, Clock, Star, MessageCircle, Share2, Eye } from "lucide-react"
+import { Upload, Loader2, FileText, Plus, ArrowRight } from "lucide-react"
 import DocumentsSection from "@/components/custom/DocumentsSection/DocumentsSection"
 import { apiEndpoints, baseUrl } from "@/constants/constants"
 import { ROUTES } from "@/constants/routeConfig"
@@ -29,6 +29,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [documentsRefetchTrigger, setDocumentsRefetchTrigger] = useState(0)
   const [documentTypes, setDocumentTypes] = useState([])
+  const [showUploadForm, setShowUploadForm] = useState(false)
 
   useEffect(() => {
     fetchDocumentTypes()
@@ -92,6 +93,7 @@ export default function HomePage() {
         setSelectedFile(null)
         setFileName("")
         setFileDescription("")
+        setShowUploadForm(false)
         setDocumentsRefetchTrigger((prev) => prev + 1)
       } else {
         toast.error(response.data.message || "Upload failed")
@@ -107,197 +109,193 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card border-b border-border">
-        <div className="max-w-full mx-auto px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="font-bold text-xl text-primary flex items-center gap-2">
-            <div className="w-8 h-8 rounded bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-sm font-bold text-primary-foreground">
               D
             </div>
             DocuVault
           </Link>
+          
           <div className="flex items-center gap-6">
-            <Link to={ROUTES.PROFILE} className="text-foreground/70 hover:text-foreground text-sm font-medium transition-colors">
-              {currentUser?.username}
-            </Link>
-            <button
-              onClick={() => navigate(ROUTES.SETTINGS)}
-              className="text-foreground/70 hover:text-foreground transition-colors"
-            >
-              ⚙️
-            </button>
+            <nav className="hidden md:flex items-center gap-8">
+              <Link to={ROUTES.FEED} className="text-foreground/70 hover:text-foreground text-sm font-medium transition-colors">
+                Community
+              </Link>
+              <Link to={ROUTES.PRICING} className="text-foreground/70 hover:text-foreground text-sm font-medium transition-colors">
+                Pricing
+              </Link>
+            </nav>
+            
+            <div className="flex items-center gap-4">
+              <Link to={ROUTES.DOWNLOAD_HISTORY} className="text-foreground/70 hover:text-foreground text-sm font-medium transition-colors">
+                Downloads
+              </Link>
+              <button
+                onClick={() => navigate(ROUTES.SETTINGS)}
+                className="text-foreground/70 hover:text-foreground transition-colors p-2 hover:bg-secondary rounded-lg"
+              >
+                ⚙️
+              </button>
+              <Link to={ROUTES.PROFILE} className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                {currentUser?.username?.charAt(0).toUpperCase() || "U"}
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto flex gap-4 px-4 py-6">
-        {/* Sidebar Navigation */}
-        <aside className="hidden sm:block w-72 flex-shrink-0">
-          <div className="sticky top-20 space-y-0">
-            <nav className="bg-card border border-border rounded overflow-hidden">
-              <Link to={ROUTES.DASHBOARD}>
-                <div className="flex items-center gap-4 px-4 py-3 border-b border-border hover:bg-secondary text-foreground cursor-pointer transition-colors">
-                  <Home size={20} className="text-primary" />
-                  <span className="font-medium">Home</span>
-                </div>
-              </Link>
-              <Link to={ROUTES.FEED}>
-                <div className="flex items-center gap-4 px-4 py-3 border-b border-border hover:bg-secondary text-foreground cursor-pointer transition-colors">
-                  <Zap size={20} className="text-primary" />
-                  <span className="font-medium">Feed</span>
-                </div>
-              </Link>
-              <Link to={ROUTES.DOWNLOAD_HISTORY} className="block">
-                <div className="flex items-center gap-4 px-4 py-3 border-b border-border hover:bg-secondary text-foreground cursor-pointer transition-colors">
-                  <Clock size={20} className="text-primary" />
-                  <span className="font-medium">Downloads</span>
-                </div>
-              </Link>
-              <Link to={ROUTES.PRICING}>
-                <div className="flex items-center gap-4 px-4 py-3 hover:bg-secondary text-foreground cursor-pointer transition-colors">
-                  <Star size={20} className="text-primary" />
-                  <span className="font-medium">Premium</span>
-                </div>
-              </Link>
-            </nav>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-foreground mb-3">
+            Welcome back, {currentUser?.username}
+          </h1>
+          <p className="text-lg text-foreground/60">
+            Manage and organize your documents in one secure place
+          </p>
+        </div>
 
-            <div className="mt-4 bg-card border border-border rounded p-4 space-y-3">
-              <h3 className="font-bold text-sm">About r/DocuVault</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Share and manage your documents securely with your community.
-              </p>
-              <div className="flex gap-4 pt-2 border-t border-border text-xs">
-                <div>
-                  <p className="text-muted-foreground">Members</p>
-                  <p className="font-bold">2.8K</p>
+        {/* Upload Section */}
+        <div className="mb-12">
+          {!showUploadForm ? (
+            <button
+              onClick={() => setShowUploadForm(true)}
+              className="w-full p-8 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all group"
+            >
+              <div className="flex flex-col items-center gap-3">
+                <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Plus size={24} className="text-primary" />
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Online</p>
-                  <p className="font-bold">347</p>
+                  <p className="font-semibold text-foreground">Upload a new document</p>
+                  <p className="text-sm text-foreground/60">Click or drag and drop files here</p>
                 </div>
               </div>
-              <button className="w-full bg-primary text-primary-foreground py-2 rounded font-semibold text-sm hover:bg-primary/90 transition-colors">
-                Join
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 min-w-0">
-          {/* Create Post Card */}
-          <div className="bg-card border border-border rounded mb-4 p-4">
-            <div className="flex gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-sm font-bold text-primary">
-                {currentUser?.username?.charAt(0).toUpperCase() || "U"}
+            </button>
+          ) : (
+            <div className="bg-card rounded-xl border border-border p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground">Upload Document</h2>
+                <button
+                  onClick={() => setShowUploadForm(false)}
+                  className="text-foreground/60 hover:text-foreground text-xl"
+                >
+                  ✕
+                </button>
               </div>
-              <form onSubmit={handleSubmit} className="flex-1 space-y-3">
-                <Input
-                  placeholder="Give your document a name..."
-                  value={fileName}
-                  onChange={(e) => setFileName(e.target.value)}
-                  className="bg-secondary border-0 text-foreground placeholder:text-muted-foreground rounded"
-                />
 
-                <Textarea
-                  placeholder="Add a description (optional)"
-                  value={fileDescription}
-                  onChange={(e) => setFileDescription(e.target.value)}
-                  className="min-h-20 bg-secondary border-0 text-foreground placeholder:text-muted-foreground resize-none rounded"
-                />
-
-                <div className="flex gap-2 flex-wrap">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="file" className="text-foreground font-semibold mb-2 block">
+                    Select File
+                  </Label>
                   <div
-                    className="flex-1 min-w-40 border-2 border-dashed border-border rounded p-3 text-center cursor-pointer hover:border-primary/50 transition-colors bg-secondary/50"
+                    className="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all"
                     onClick={() => document.getElementById("fileInput").click()}
                   >
-                    <p className="text-xs text-muted-foreground font-medium">
-                      {selectedFile ? selectedFile.name : "Upload file"}
-                    </p>
+                    <FileText size={32} className="text-primary/50 mx-auto mb-2" />
+                    <p className="text-sm text-foreground/70">{selectedFile?.name || "Choose file"}</p>
                     <input
                       type="file"
                       id="fileInput"
                       className="hidden"
                       accept=".doc,.docx,.pdf,image/*"
                       onChange={handleFileInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="name" className="text-foreground font-semibold mb-2 block">
+                      Document Name
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="e.g., Project Proposal"
+                      value={fileName}
+                      onChange={(e) => setFileName(e.target.value)}
+                      required
                     />
                   </div>
 
-                  <Select value={fileCategory} onValueChange={setFileCategory}>
-                    <SelectTrigger className="w-40 bg-secondary border-0 rounded text-xs">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {documentTypes.map((type) => (
-                        <SelectItem key={type.id} value={String(type.id)}>
-                          {type.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <Label htmlFor="category" className="text-foreground font-semibold mb-2 block">
+                      Category
+                    </Label>
+                    <Select value={fileCategory} onValueChange={(value) => setFileCategory(value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {documentTypes.map((type) => (
+                          <SelectItem key={type.id} value={String(type.id)}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFileName("")
-                      setFileDescription("")
-                      setSelectedFile(null)
-                    }}
-                    className="px-4 py-2 text-sm text-muted-foreground hover:bg-secondary rounded transition-colors font-medium"
-                  >
-                    Cancel
-                  </button>
+                <div>
+                  <Label htmlFor="description" className="text-foreground font-semibold mb-2 block">
+                    Description (Optional)
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Add details about this document..."
+                    value={fileDescription}
+                    onChange={(e) => setFileDescription(e.target.value)}
+                    className="min-h-[100px] resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
                   <Button
                     type="submit"
-                    className="px-6 py-2 bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold rounded"
+                    className="flex-1"
                     disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin mr-2" />
-                        Uploading
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
                       </>
                     ) : (
                       <>
-                        <Upload className="w-3 h-3 mr-2" />
-                        Post
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload Document
                       </>
                     )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowUploadForm(false)}
+                  >
+                    Cancel
                   </Button>
                 </div>
               </form>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Documents Feed */}
-          <div className="space-y-4">
-            <DocumentsSection
-              userId={currentUser?.user_id}
-              baseUrl={baseUrl}
-              refetchTrigger={documentsRefetchTrigger}
-            />
-          </div>
-        </main>
-
-        {/* Right Sidebar - Trending (hidden on smaller screens) */}
-        <aside className="hidden lg:block w-72 flex-shrink-0">
-          <div className="sticky top-20 bg-card border border-border rounded overflow-hidden">
-            <div className="bg-primary text-primary-foreground px-4 py-3">
-              <p className="font-bold text-sm">Trending Today</p>
-            </div>
-            <div className="divide-y divide-border">
-              {["Documentation", "API Guides", "Security Tips", "Best Practices", "Community Highlights"].map((trend, i) => (
-                <div key={i} className="px-4 py-3 hover:bg-secondary cursor-pointer transition-colors">
-                  <p className="text-xs text-muted-foreground">r/DocuVault • Trending</p>
-                  <p className="text-sm font-semibold text-foreground mt-1">{trend}</p>
-                  <p className="text-xs text-muted-foreground mt-1">847K upvotes</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </aside>
-      </div>
+        {/* Documents Section */}
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Your Documents</h2>
+          <DocumentsSection
+            userId={currentUser?.user_id}
+            baseUrl={baseUrl}
+            refetchTrigger={documentsRefetchTrigger}
+          />
+        </div>
+      </main>
     </div>
   )
 }

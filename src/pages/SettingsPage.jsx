@@ -1,21 +1,20 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { Menu, Save } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Link, useNavigate } from "react-router-dom";
-import DeleteAccountModal from "@/components/custom/Modals/DeleteAccountModal";
-import { useSelector } from "react-redux";
-import { apiEndpoints } from "@/constants/constants";
-import { parseApiError } from "@/utils/parseApiError";
-import { useDispatch } from "react-redux";
-import { logout } from "@/redux/auth/authSlice";
-import { clearState } from "@/redux/user/userSlice";
+import axios from "axios"
+import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
+import { Save, LogOut, Menu } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
+import { Link, useNavigate } from "react-router-dom"
+import DeleteAccountModal from "@/components/custom/Modals/DeleteAccountModal"
+import { useSelector, useDispatch } from "react-redux"
+import { apiEndpoints } from "@/constants/constants"
+import { parseApiError } from "@/utils/parseApiError"
+import { logout } from "@/redux/auth/authSlice"
+import { clearState } from "@/redux/user/userSlice"
+import { ROUTES } from "@/constants/routeConfig"
 
 
 const SettingsPage = () => {
@@ -155,7 +154,7 @@ const SettingsPage = () => {
         dispatch(clearState());
         localStorage.clear();
         delete axios.defaults.headers.common["Authorization"];
-        navigate("/", { replace: true });
+        navigate(ROUTES.HOME, { replace: true });
       } else {
         toast.error(response.data?.message || "Failed to delete account");
       }

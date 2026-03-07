@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FiUser, FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc";
-import { apiEndpoints, baseUrl, registerToken } from "../constants/constants";
-import { GoogleLogin } from '@react-oauth/google';
+import React, { useState } from "react"
+import axios from "axios"
+import { Link, useNavigate } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { User, Mail, Lock, Eye, EyeOff, CheckCircle } from "lucide-react"
+import { apiEndpoints, baseUrl, registerToken } from "@/constants/constants"
+import { ROUTES } from "@/constants/routeConfig"
+import { responseMessages } from "@/constants/messages"
+import { GoogleLogin } from '@react-oauth/google'
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -76,177 +77,183 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background to-secondary/20 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Header with Back Link */}
+      <div className="mb-8">
+        <button
+          onClick={() => navigate(ROUTES.HOME)}
+          className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+        >
+          ← Back to Home
+        </button>
+      </div>
+
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create an account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Join us and start managing your documents securely
-          </p>
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-bold text-foreground">Create account</h2>
+          <p className="text-muted-foreground">Join DocuVault and secure your documents</p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <Label htmlFor="username" className="sr-only">
-                Username
-              </Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiUser
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
-                  required
-                  className="appearance-none rounded-t-md relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+
+        {/* Form */}
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Username Field */}
+          <div className="space-y-2">
+            <Label htmlFor="username" className="text-foreground font-medium">
+              Username
+            </Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-muted-foreground" />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="email" className="sr-only">
-                Email address
-              </Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiMail
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="appearance-none relative block w-full px-3 py-2 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="password" className="sr-only">
-                Password
-              </Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiLock
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  required
-                  className="appearance-none rounded-b-md relative block w-full px-3 py-2 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                  >
-                    {showPassword ? (
-                      <FiEyeOff className="h-5 w-5" aria-hidden="true" />
-                    ) : (
-                      <FiEye className="h-5 w-5" aria-hidden="true" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                className="pl-10 py-3 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Choose a username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
             </div>
           </div>
 
-          <div>
-            <Button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-            >
-              Sign up
-            </Button>
+          {/* Email Field */}
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-foreground font-medium">
+              Email address
+            </Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="pl-10 py-3 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
+
+          {/* Password Field */}
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-foreground font-medium">
+              Password
+            </Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                required
+                className="pl-10 pr-10 py-3 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Terms Checkbox */}
+          <div className="flex items-start gap-2 text-sm">
+            <input type="checkbox" id="terms" className="mt-1" required />
+            <label htmlFor="terms" className="text-muted-foreground">
+              I agree to the{" "}
+              <a href="#" className="text-primary hover:text-primary/80 font-medium">
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="#" className="text-primary hover:text-primary/80 font-medium">
+                Privacy Policy
+              </a>
+            </label>
+          </div>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-full btn btn-primary py-3 text-base font-semibold"
+          >
+            Create account
+          </Button>
         </form>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">
-                Or continue with
-              </span>
-            </div>
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border"></div>
           </div>
-
-          <div className="mt-6">
-            <GoogleLogin
-              onSuccess={async (credentialResponse) => {
-                const idToken = credentialResponse.credential;
-
-                try {
-                  const response = await axios.post(`${baseUrl}/api/v1/Google/OAuth`, {
-                    id_token: idToken,
-                  });
-
-                  const { success, token, user, message } = response.data;
-                  console.log("Success block reached, message:", message);
-
-                  if (success && token) {
-                    toast.success(message || "Google Sign-in successful!");
-
-                    localStorage.setItem("authToken", token);
-                    localStorage.setItem("currentUser", JSON.stringify(user));
-                    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-                    dispatch(signInSuccess({ user }));
-                    dispatch(login(user));
-
-                    setTimeout(() => {
-                      navigate("/home");
-                    }, 1000);
-                  } else {
-                    const parsedError = parseApiError(response);
-                    toast.error(parsedError);
-                    dispatch(signInFailure(parsedError));
-                  }
-                } catch (error) {
-                  const parsedError = parseApiError(error);
-                  toast.error(parsedError);
-                  dispatch(signInFailure(parsedError));
-                }
-              }}
-              onError={() => {
-                toast.error("Google sign-in failed.");
-              }}
-            />
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-background text-muted-foreground">Or continue with</span>
           </div>
         </div>
 
-        <div className="mt-6 text-center text-sm">
-          <p className="text-gray-600">
+        {/* Google Sign In */}
+        <div className="mt-4">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              const idToken = credentialResponse.credential
+
+              try {
+                const response = await axios.post(`${baseUrl}/api/v1/Google/OAuth`, {
+                  id_token: idToken,
+                })
+
+                const { success, token, user, message } = response.data
+
+                if (success && token) {
+                  toast.success(message || "Google sign-up successful!")
+
+                  localStorage.setItem("authToken", token)
+                  localStorage.setItem("currentUser", JSON.stringify(user))
+                  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+
+                  setTimeout(() => {
+                    navigate(ROUTES.DASHBOARD)
+                  }, 1000)
+                } else {
+                  toast.error("Google sign-up failed")
+                }
+              } catch (error) {
+                toast.error("Google sign-up failed. Please try again.")
+              }
+            }}
+            onError={() => {
+              toast.error("Google sign-up failed.")
+            }}
+          />
+        </div>
+
+        {/* Sign In Link */}
+        <div className="text-center text-sm">
+          <p className="text-muted-foreground">
             Already have an account?{" "}
             <Link
-              to="/login"
-              className="font-medium text-primary hover:text-primary-dark"
+              to={ROUTES.LOGIN}
+              className="font-medium text-primary hover:text-primary/80 transition-colors"
             >
               Sign in
             </Link>
@@ -255,7 +262,7 @@ const RegisterPage = () => {
       </div>
       <Toaster position="top-center" reverseOrder={false} />
     </div>
-  );
+  )
 };
 
 export default RegisterPage;

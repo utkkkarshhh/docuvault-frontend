@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
-import { Button } from "../components/ui/button"
-import { Input } from "../components/ui/input"
-import { Label } from "../components/ui/label"
-import { Progress } from "../components/ui/progress"
-import { Mail, ArrowLeft, Eye, EyeOff, Check } from "lucide-react"
-import { Spinner } from "../components/ui/spinner"
-import { AuthPageSkeleton } from "../components/skeletons/AuthPageSkeleton"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
+import { Mail, Eye, EyeOff, Check, ArrowLeft } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
+import { AuthPageSkeleton } from "@/components/skeletons/AuthPageSkeleton"
 import { requestOtp, verifyOTP, resetPassword } from "@/actions/authActions"
 import { parseApiError } from "@/utils/parseApiError"
+import { ROUTES } from "@/constants/routeConfig"
+import { responseMessages } from "@/constants/messages"
 
 const ResetPasswordPage = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -134,7 +136,7 @@ const ResetPasswordPage = () => {
 
       toast.success(data.message || "Password reset successfully! You can now login.")
 
-      navigate("/login")
+      navigate(ROUTES.LOGIN)
     } catch (error) {
       const parsedError = parseApiError(error)
       toast.error(parsedError)
@@ -167,7 +169,7 @@ const ResetPasswordPage = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1)
     } else {
-      navigate("/login")
+      navigate(ROUTES.LOGIN)
     }
   }
 
@@ -414,9 +416,9 @@ const ResetPasswordPage = () => {
 
         {/* Footer */}
         <div className="text-center text-sm">
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Remember your password?{" "}
-            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link to={ROUTES.LOGIN} className="font-medium text-primary hover:text-primary/80 transition-colors">
               Sign in
             </Link>
           </p>
